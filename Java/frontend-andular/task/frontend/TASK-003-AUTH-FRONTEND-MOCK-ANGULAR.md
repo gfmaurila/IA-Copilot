@@ -1,0 +1,1677 @@
+# TASK-003 — Criar Estrutura Frontend Angular de Autenticação com Dados Mockados
+
+## 1. Objetivo
+
+Criar a estrutura completa do módulo frontend:
+
+```text
+frontend/auth
+```
+
+Este módulo será responsável pelas telas e pelo fluxo inicial de autenticação do projeto RH.
+
+Nesta primeira versão, a autenticação será totalmente simulada utilizando dados mockados em arquivos JSON.
+
+Não criar backend nesta task.
+
+O objetivo é entregar um módulo funcional contendo:
+
+```text
+Login
+Recuperar senha
+Redefinir senha
+Sessão mockada
+Logout
+Rotas
+Estados de loading
+Estados de erro
+Mensagens de sucesso
+Dados mockados em JSON
+```
+
+A implementação deve ser simples, organizada e fácil de entender para alguém iniciante em frontend.
+
+---
+
+# 2. Resultado esperado
+
+Ao concluir esta task, deve existir:
+
+```text
+frontend/auth/
+```
+
+com uma aplicação Angular + TypeScript funcional.
+
+URLs principais:
+
+```text
+/
+ /login
+ /recuperar-senha
+ /redefinir-senha
+```
+
+A rota `/` pode redirecionar para:
+
+```text
+/login
+```
+
+---
+
+# 3. Stack
+
+Utilizar:
+
+```text
+Angular
+TypeScript
+Angular CLI
+Angular Router
+Angular HttpClient preparado para futuro
+CSS simples organizado
+ESLint
+Prettier
+```
+
+Não utilizar nesta primeira versão:
+
+```text
+Redux
+Zustand
+TanStack Query
+Axios
+Material UI
+Tailwind
+Backend real
+JWT real
+Refresh Token real
+```
+
+---
+
+# 4. Estrutura esperada
+
+```text
+frontend/
+└── auth/
+    ├── public/
+    │   ├── favicon.svg
+    │   └── mocks/
+    │       ├── users.json
+    │       ├── auth-messages.json
+    │       └── reset-tokens.json
+    │
+    ├── src/
+    │   ├── app/
+    │   │   ├── components/
+    │   │   │   ├── auth-card/
+    │   │   │   │   ├── auth-card.component.ts
+    │   │   │   │   ├── auth-card.component.html
+    │   │   │   │   └── auth-card.component.css
+    │   │   │   ├── form-field/
+    │   │   │   ├── loading-button/
+    │   │   │   ├── alert/
+    │   │   │   └── auth-header/
+    │   │   │
+    │   │   ├── layouts/
+    │   │   │   └── auth-layout/
+    │   │   │       ├── auth-layout.component.ts
+    │   │   │       ├── auth-layout.component.html
+    │   │   │       └── auth-layout.component.css
+    │   │   │
+    │   │   ├── pages/
+    │   │   │   ├── login/
+    │   │   │   │   ├── login-page.component.ts
+    │   │   │   │   ├── login-page.component.html
+    │   │   │   │   └── login-page.component.css
+    │   │   │   ├── forgot-password/
+    │   │   │   │   ├── forgot-password-page.component.ts
+    │   │   │   │   ├── forgot-password-page.component.html
+    │   │   │   │   └── forgot-password-page.component.css
+    │   │   │   └── reset-password/
+    │   │   │       ├── reset-password-page.component.ts
+    │   │   │       ├── reset-password-page.component.html
+    │   │   │       └── reset-password-page.component.css
+    │   │   │
+    │   │   ├── models/
+    │   │   │   └── auth.types.ts
+    │   │   ├── services/
+    │   │   │   ├── auth.service.ts
+    │   │   │   └── auth-api.service.ts
+    │   │   ├── storage/
+    │   │   │   └── auth.storage.ts
+    │   │   ├── utils/
+    │   │   │   └── delay.ts
+    │   │   ├── app.component.ts
+    │   │   ├── app.component.html
+    │   │   ├── app.config.ts
+    │   │   └── app.routes.ts
+    │   │
+    │   ├── environments/
+    │   │   ├── environment.ts
+    │   │   ├── environment.development.ts
+    │   │   ├── environment.homolog.ts
+    │   │   ├── environment.production.ts
+    │   │   └── environment.docker.ts
+    │   │
+    │   ├── styles/
+    │   │   ├── reset.css
+    │   │   ├── variables.css
+    │   │   └── global.css
+    │   ├── index.html
+    │   └── main.ts
+    │
+    ├── angular.json
+    ├── package.json
+    ├── tsconfig.json
+    └── README.md
+```
+
+> Preferir componentes **standalone**, mantendo a estrutura simples para facilitar o aprendizado.
+
+---
+
+# 5. Rotas
+
+Criar:
+
+```text
+src/app/app.routes.ts
+```
+
+Rotas:
+
+```text
+/login
+/recuperar-senha
+/redefinir-senha
+```
+
+Exemplo:
+
+```ts
+import { Routes } from '@angular/router';
+import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
+import { LoginPageComponent } from './pages/login/login-page.component';
+import { ForgotPasswordPageComponent } from './pages/forgot-password/forgot-password-page.component';
+import { ResetPasswordPageComponent } from './pages/reset-password/reset-password-page.component';
+
+export const routes: Routes = [
+  {
+    path: '',
+    component: AuthLayoutComponent,
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'login' },
+      { path: 'login', component: LoginPageComponent },
+      { path: 'recuperar-senha', component: ForgotPasswordPageComponent },
+      { path: 'redefinir-senha', component: ResetPasswordPageComponent },
+    ],
+  },
+];
+```
+
+No `app.config.ts`, configurar:
+
+```ts
+provideRouter(routes)
+```
+
+---
+
+# 6. Layout
+
+Criar:
+
+```text
+src/app/layouts/auth-layout/auth-layout.component.ts
+```
+
+Estrutura sugerida:
+
+```text
+Logo / nome do sistema
+        ↓
+   AuthCard
+        ↓
+      Outlet
+```
+
+Visual:
+
+```text
+centralizado
+limpo
+profissional
+responsivo
+```
+
+---
+
+# 7. Página de Login
+
+Criar:
+
+```text
+src/app/pages/login/login-page.component.ts
+```
+
+Campos:
+
+```text
+Email
+Senha
+```
+
+Ações:
+
+```text
+Entrar
+Esqueci minha senha
+```
+
+Exemplo visual:
+
+```text
+Talent RH
+
+Acesse sua conta
+
+Email
+[________________]
+
+Senha
+[________________]
+
+[ Entrar ]
+
+Esqueci minha senha
+```
+
+---
+
+# 8. Comportamento do Login
+
+Ao clicar em:
+
+```text
+Entrar
+```
+
+executar:
+
+```text
+LoginPage
+   ↓
+auth.service.ts
+   ↓
+users.json
+   ↓
+validar email e senha
+   ↓
+retornar usuário mockado
+```
+
+Não importar:
+
+```text
+users.json
+```
+
+diretamente dentro da página.
+
+---
+
+# 9. Mock de usuários
+
+Criar:
+
+```text
+public/mocks/users.json
+```
+
+Exemplo:
+
+```json
+[
+  {
+    "id": "1",
+    "name": "Administrador RH",
+    "email": "admin@rh.local",
+    "password": "123456",
+    "role": "admin",
+    "active": true
+  },
+  {
+    "id": "2",
+    "name": "Usuário Teste",
+    "email": "usuario@rh.local",
+    "password": "123456",
+    "role": "user",
+    "active": true
+  },
+  {
+    "id": "3",
+    "name": "Usuário Inativo",
+    "email": "inativo@rh.local",
+    "password": "123456",
+    "role": "user",
+    "active": false
+  }
+]
+```
+
+Estes dados são somente para desenvolvimento.
+
+Nunca utilizar senhas reais.
+
+---
+
+# 10. Credenciais de teste
+
+Documentar no README:
+
+```text
+Administrador
+
+Email:
+admin@rh.local
+
+Senha:
+123456
+```
+
+E:
+
+```text
+Usuário
+
+Email:
+usuario@rh.local
+
+Senha:
+123456
+```
+
+Deixar explícito:
+
+```text
+CREDENCIAIS SOMENTE PARA MOCK LOCAL
+```
+
+---
+
+# 11. Regras do Login
+
+Validar:
+
+```text
+email vazio
+senha vazia
+email inexistente
+senha incorreta
+usuário inativo
+```
+
+Mensagens sugeridas:
+
+```text
+Informe o e-mail.
+Informe a senha.
+Usuário ou senha inválidos.
+Usuário inativo.
+Login realizado com sucesso.
+```
+
+Não informar de forma diferente:
+
+```text
+email existe
+email não existe
+```
+
+no erro de credencial.
+
+Para login inválido utilizar preferencialmente:
+
+```text
+Usuário ou senha inválidos.
+```
+
+---
+
+# 12. Tipos TypeScript
+
+Criar:
+
+```text
+src/app/models/auth.types.ts
+```
+
+Exemplo:
+
+```ts
+export type UserRole = 'admin' | 'user';
+
+export interface MockUser {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+  role: UserRole;
+  active: boolean;
+}
+
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  user: AuthUser;
+  accessToken: string;
+}
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+```
+
+Evitar:
+
+```ts
+any
+```
+
+---
+
+# 13. Token mockado
+
+Após login válido, retornar token fictício.
+
+Exemplo:
+
+```text
+mock-access-token-user-1
+```
+
+Este token não é JWT real.
+
+Não tentar simular criptografia.
+
+Exemplo de retorno:
+
+```json
+{
+  "user": {
+    "id": "1",
+    "name": "Administrador RH",
+    "email": "admin@rh.local",
+    "role": "admin"
+  },
+  "accessToken": "mock-access-token-user-1"
+}
+```
+
+---
+
+# 14. Storage local
+
+Criar:
+
+```text
+src/app/storage/auth.storage.ts
+```
+
+Responsabilidade:
+
+```text
+salvar sessão mockada
+ler sessão mockada
+remover sessão
+```
+
+Exemplo:
+
+```ts
+const AUTH_STORAGE_KEY = '@rh:auth';
+
+export function saveAuthSession(session: LoginResponse): void {
+  localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
+}
+
+export function getAuthSession(): LoginResponse | null {
+  const value = localStorage.getItem(AUTH_STORAGE_KEY);
+
+  if (!value) {
+    return null;
+  }
+
+  return JSON.parse(value) as LoginResponse;
+}
+
+export function clearAuthSession(): void {
+  localStorage.removeItem(AUTH_STORAGE_KEY);
+}
+```
+
+---
+
+# 15. Segurança do mock
+
+Deixar explícito:
+
+```text
+localStorage
+senha em JSON
+token mockado
+```
+
+são usados exclusivamente para desenvolvimento local.
+
+Nunca usar essa estratégia como autenticação de produção.
+
+---
+
+# 16. auth.service.ts
+
+Criar:
+
+```text
+src/app/services/auth.service.ts
+```
+
+Responsabilidades:
+
+```text
+login
+logout
+forgotPassword
+resetPassword
+```
+
+Assinaturas sugeridas:
+
+```ts
+@Injectable({ providedIn: 'root' })
+export class AuthService {
+  login(request: LoginRequest): Promise<LoginResponse>;
+  logout(): Promise<void>;
+  forgotPassword(request: ForgotPasswordRequest): Promise<void>;
+  resetPassword(request: ResetPasswordRequest): Promise<void>;
+}
+```
+
+---
+
+# 17. Login mockado no service
+
+Fluxo:
+
+```text
+receber email/senha
+   ↓
+simular delay
+   ↓
+buscar usuário no users.json
+   ↓
+validar active
+   ↓
+validar senha
+   ↓
+criar AuthUser sem password
+   ↓
+criar token mockado
+   ↓
+salvar sessão
+   ↓
+retornar LoginResponse
+```
+
+Nunca retornar:
+
+```text
+password
+```
+
+no objeto autenticado.
+
+---
+
+# 18. Delay simulado
+
+Criar:
+
+```text
+src/app/utils/delay.ts
+```
+
+Exemplo:
+
+```ts
+export function delay(ms = 500): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+```
+
+Usar para simular chamadas HTTP.
+
+Exemplo:
+
+```ts
+await delay(500);
+```
+
+---
+
+# 19. Recuperar senha
+
+Criar:
+
+```text
+src/app/pages/forgot-password/forgot-password-page.component.ts
+```
+
+Campo:
+
+```text
+Email
+```
+
+Botão:
+
+```text
+Enviar instruções
+```
+
+Link:
+
+```text
+Voltar para o login
+```
+
+---
+
+# 20. Comportamento de recuperação
+
+Fluxo:
+
+```text
+usuário informa e-mail
+        ↓
+forgotPassword()
+        ↓
+simular delay
+        ↓
+retornar mensagem genérica
+```
+
+Mensagem:
+
+```text
+Se o e-mail estiver cadastrado, você receberá instruções para redefinir sua senha.
+```
+
+Mesmo se o e-mail não existir, retornar a mesma mensagem.
+
+Isso evita indicar se uma conta existe.
+
+---
+
+# 21. Mock de tokens de recuperação
+
+Criar:
+
+```text
+public/mocks/reset-tokens.json
+```
+
+Exemplo:
+
+```json
+[
+  {
+    "token": "reset-token-admin-123",
+    "userId": "1",
+    "active": true
+  },
+  {
+    "token": "reset-token-user-456",
+    "userId": "2",
+    "active": true
+  }
+]
+```
+
+Somente para demonstração.
+
+---
+
+# 22. Link de recuperação mockado
+
+Como não existe envio real de e-mail, documentar no README uma URL de teste:
+
+```text
+http://localhost:4200/redefinir-senha?token=reset-token-admin-123
+```
+
+No Docker:
+
+```text
+http://localhost:8083/redefinir-senha?token=reset-token-admin-123
+```
+
+---
+
+# 23. Página redefinir senha
+
+Criar:
+
+```text
+src/app/pages/reset-password/reset-password-page.component.ts
+```
+
+Campos:
+
+```text
+Nova senha
+Confirmar nova senha
+```
+
+Botão:
+
+```text
+Redefinir senha
+```
+
+---
+
+# 24. Regras para nova senha
+
+Nesta primeira versão:
+
+```text
+mínimo 6 caracteres
+nova senha obrigatória
+confirmação obrigatória
+senhas devem ser iguais
+token deve existir
+token deve estar ativo
+```
+
+Mensagens:
+
+```text
+Informe a nova senha.
+A senha deve possuir pelo menos 6 caracteres.
+Confirme a nova senha.
+As senhas não conferem.
+Token de recuperação inválido.
+Senha redefinida com sucesso.
+```
+
+---
+
+# 25. Atualização do mock
+
+Como arquivos JSON não podem ser alterados no navegador de forma persistente:
+
+```text
+resetPassword()
+```
+
+não deve tentar editar fisicamente:
+
+```text
+users.json
+```
+
+Nesta task, ao redefinir com sucesso:
+
+```text
+simular sucesso
+```
+
+e redirecionar para:
+
+```text
+/login
+```
+
+Não fingir que o JSON foi realmente persistido.
+
+---
+
+# 26. auth-messages.json
+
+Criar:
+
+```text
+public/mocks/auth-messages.json
+```
+
+Exemplo:
+
+```json
+{
+  "login": {
+    "success": "Login realizado com sucesso.",
+    "invalidCredentials": "Usuário ou senha inválidos.",
+    "inactiveUser": "Usuário inativo."
+  },
+  "forgotPassword": {
+    "success": "Se o e-mail estiver cadastrado, você receberá instruções para redefinir sua senha."
+  },
+  "resetPassword": {
+    "success": "Senha redefinida com sucesso.",
+    "invalidToken": "Token de recuperação inválido."
+  }
+}
+```
+
+---
+
+# 27. Loading
+
+Durante operações:
+
+```text
+login
+recuperar senha
+redefinir senha
+```
+
+desabilitar o botão.
+
+Exemplos:
+
+```text
+Entrando...
+Enviando...
+Redefinindo...
+```
+
+Evitar clique duplicado.
+
+---
+
+# 28. Alertas
+
+Criar componente:
+
+```text
+Alert
+```
+
+Tipos:
+
+```text
+success
+error
+info
+```
+
+Exemplo:
+
+```html
+<app-alert type="error">
+  Usuário ou senha inválidos.
+</app-alert>
+```
+
+---
+
+# 29. Validação de formulário
+
+Implementar validação simples no frontend.
+
+Não instalar biblioteca adicional apenas para esta task.
+
+Exemplo:
+
+```text
+email obrigatório
+formato básico de email
+senha obrigatória
+```
+
+Pode utilizar funções TypeScript simples.
+
+---
+
+# 30. LoginPage — fluxo esperado
+
+```text
+Abrir /login
+   ↓
+Informar email
+   ↓
+Informar senha
+   ↓
+Clicar Entrar
+   ↓
+Loading
+   ↓
+auth.service.login()
+   ↓
+users.json
+   ↓
+Validar
+   ↓
+Salvar sessão
+   ↓
+Sucesso
+```
+
+Após sucesso:
+
+```text
+admin → http://localhost:8082
+user  → inicialmente exibir mensagem ou redirecionar conforme regra do projeto
+```
+
+---
+
+# 31. Redirecionamento após login
+
+Para esta fase:
+
+Se:
+
+```text
+role = admin
+```
+
+redirecionar para URL configurada:
+
+```text
+environment.adminBaseUrl
+```
+
+Se:
+
+```text
+role = user
+```
+
+redirecionar para:
+
+```text
+environment.siteBaseUrl
+```
+
+Não escrever URLs diretamente na página.
+
+---
+
+# 32. Ambientes
+
+No Angular, utilizar arquivos de ambiente em vez de `.env` do Vite.
+
+Criar:
+
+```text
+src/environments/environment.ts
+src/environments/environment.development.ts
+src/environments/environment.homolog.ts
+src/environments/environment.production.ts
+src/environments/environment.docker.ts
+```
+
+---
+
+# 33. Ambiente local
+
+`src/environments/environment.ts`
+
+```ts
+export const environment = {
+  production: false,
+  appName: 'RH Auth',
+  appEnv: 'local',
+  authBaseUrl: 'http://localhost:4200',
+  siteBaseUrl: 'http://localhost:4201',
+  adminBaseUrl: 'http://localhost:4202',
+  apiBaseUrl: 'http://localhost:5000',
+  authDataSource: 'mock',
+  enableLogs: true,
+};
+```
+
+> As portas locais acima são uma sugestão para execução simultânea sem Docker. Se o projeto já possuir portas definidas, preservar as portas reais.
+
+---
+
+# 34. Ambiente development
+
+```ts
+export const environment = {
+  production: false,
+  appName: 'RH Auth',
+  appEnv: 'development',
+  authBaseUrl: 'https://dev-auth.exemplo.com',
+  siteBaseUrl: 'https://dev-site.exemplo.com',
+  adminBaseUrl: 'https://dev-admin.exemplo.com',
+  apiBaseUrl: 'https://dev-api.exemplo.com',
+  authDataSource: 'mock',
+  enableLogs: true,
+};
+```
+
+---
+
+# 35. Ambiente homolog
+
+```ts
+export const environment = {
+  production: false,
+  appName: 'RH Auth',
+  appEnv: 'homolog',
+  authBaseUrl: 'https://homolog-auth.exemplo.com',
+  siteBaseUrl: 'https://homolog-site.exemplo.com',
+  adminBaseUrl: 'https://homolog-admin.exemplo.com',
+  apiBaseUrl: 'https://homolog-api.exemplo.com',
+  authDataSource: 'mock',
+  enableLogs: true,
+};
+```
+
+---
+
+# 36. Ambiente production
+
+```ts
+export const environment = {
+  production: true,
+  appName: 'RH Auth',
+  appEnv: 'production',
+  authBaseUrl: 'https://auth.exemplo.com',
+  siteBaseUrl: 'https://www.exemplo.com',
+  adminBaseUrl: 'https://admin.exemplo.com',
+  apiBaseUrl: 'https://api.exemplo.com',
+  authDataSource: 'mock',
+  enableLogs: false,
+};
+```
+
+`authDataSource: 'mock'` é temporário. Antes de produção real, a autenticação deve ser migrada para backend.
+
+---
+
+# 37. Ambiente Docker
+
+`src/environments/environment.docker.ts`
+
+```ts
+export const environment = {
+  production: true,
+  appName: 'RH Auth',
+  appEnv: 'docker',
+  authBaseUrl: 'http://localhost:8083',
+  siteBaseUrl: 'http://localhost:8081',
+  adminBaseUrl: 'http://localhost:8082',
+  apiBaseUrl: 'http://localhost:5000',
+  authDataSource: 'mock',
+  enableLogs: true,
+};
+```
+
+Esta configuração é compatível com a TASK-002.
+
+---
+
+# 38. Configuração no angular.json
+
+Configurar `fileReplacements` para `development`, `homolog`, `production` e `docker`.
+
+Exemplo para Docker:
+
+```json
+{
+  "docker": {
+    "fileReplacements": [
+      {
+        "replace": "src/environments/environment.ts",
+        "with": "src/environments/environment.docker.ts"
+      }
+    ]
+  }
+}
+```
+
+---
+
+# 39. Uso das configurações
+
+Não utilizar `import.meta.env` ou variáveis `VITE_*`.
+
+Importar:
+
+```ts
+import { environment } from '../../environments/environment';
+```
+
+Exemplo:
+
+```ts
+const adminUrl = environment.adminBaseUrl;
+const siteUrl = environment.siteBaseUrl;
+```
+
+Nenhuma URL deve ficar hardcoded nas páginas.
+
+---
+
+# 40. API futura
+
+Criar:
+
+```text
+src/app/services/auth-api.service.ts
+```
+
+Mesmo sem utilizar nesta etapa.
+
+Exemplo:
+
+```ts
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+import {
+  LoginRequest,
+  LoginResponse,
+  ForgotPasswordRequest,
+  ResetPasswordRequest,
+} from '../models/auth.types';
+
+@Injectable({ providedIn: 'root' })
+export class AuthApiService {
+  private readonly http = inject(HttpClient);
+
+  login(request: LoginRequest): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(
+      `${environment.apiBaseUrl}/api/auth/login`,
+      request
+    );
+  }
+
+  forgotPassword(request: ForgotPasswordRequest): Observable<void> {
+    return this.http.post<void>(
+      `${environment.apiBaseUrl}/api/auth/forgot-password`,
+      request
+    );
+  }
+
+  resetPassword(request: ResetPasswordRequest): Observable<void> {
+    return this.http.post<void>(
+      `${environment.apiBaseUrl}/api/auth/reset-password`,
+      request
+    );
+  }
+}
+```
+
+Configurar `provideHttpClient()` no `app.config.ts`.
+
+Nesta task, o `auth.service.ts` continua utilizando os mocks. O `AuthApiService` fica preparado para a integração futura.
+
+---
+
+# 41. Estrutura futura de troca Mock → API
+
+Hoje:
+
+```text
+Page
+  ↓
+auth.service.ts
+  ↓
+JSON Mock
+```
+
+Futuramente:
+
+```text
+Page
+  ↓
+auth.service.ts
+  ↓
+auth.api.ts
+  ↓
+Backend
+```
+
+As páginas não devem precisar ser reescritas.
+
+---
+
+# 42. CSS
+
+Criar:
+
+```text
+src/styles/reset.css
+src/styles/variables.css
+src/styles/global.css
+```
+
+Sugestão de variáveis:
+
+```css
+:root {
+  --font-family: Inter, Arial, sans-serif;
+
+  --color-primary: #1f4f8a;
+  --color-primary-dark: #163a66;
+
+  --color-background: #f5f7fa;
+  --color-surface: #ffffff;
+
+  --color-text: #222222;
+  --color-text-light: #666666;
+
+  --color-border: #dfe3e8;
+
+  --color-error: #b42318;
+  --color-success: #067647;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+}
+```
+
+---
+
+# 43. Responsividade
+
+A tela deve funcionar em:
+
+```text
+Desktop
+Tablet
+Mobile
+```
+
+No mobile:
+
+```text
+AuthCard ocupa quase toda largura
+campos ocupam 100%
+botão ocupa 100%
+textos não quebram layout
+```
+
+---
+
+# 44. Acessibilidade
+
+Adicionar:
+
+```text
+label associado ao input
+autocomplete adequado
+type=email
+type=password
+botões reais
+foco visível
+mensagens de erro legíveis
+```
+
+Login:
+
+```html
+autocomplete="email"
+autocomplete="current-password"
+```
+
+Redefinição:
+
+```html
+autocomplete="new-password"
+```
+
+---
+
+# 45. Mostrar/ocultar senha
+
+Adicionar botão simples:
+
+```text
+Mostrar senha
+Ocultar senha
+```
+
+para:
+
+```text
+Login
+Nova senha
+Confirmar senha
+```
+
+Não instalar biblioteca para isso.
+
+---
+
+# 46. Logout
+
+Criar:
+
+```ts
+logout()
+```
+
+que:
+
+```text
+remove sessão
+```
+
+Não é necessário criar página de logout.
+
+O método deve ficar preparado para consumo futuro pelo Admin ou Site.
+
+---
+
+# 47. README
+
+Criar:
+
+```text
+frontend/auth/README.md
+```
+
+Documentar:
+
+```text
+Objetivo
+Tecnologias
+Instalação
+Execução
+Rotas
+Mocks
+Credenciais de teste
+Recuperação de senha
+Token de recuperação mockado
+Ambientes
+Docker
+Build
+Limitações de segurança
+```
+
+---
+
+# 48. Scripts
+
+No `package.json`:
+
+```json
+{
+  "scripts": {
+    "start": "ng serve",
+    "start:development": "ng serve --configuration development",
+    "start:homolog": "ng serve --configuration homolog",
+    "start:production": "ng serve --configuration production",
+    "build": "ng build",
+    "build:development": "ng build --configuration development",
+    "build:homolog": "ng build --configuration homolog",
+    "build:production": "ng build --configuration production",
+    "build:docker": "ng build --configuration docker",
+    "lint": "ng lint"
+  }
+}
+```
+
+> Caso o projeto Angular não tenha lint configurado pelo starter escolhido, configurar ESLint para Angular antes de exigir `npm run lint`.
+
+---
+
+# 49. Testes manuais
+
+Validar login correto:
+
+```text
+admin@rh.local
+123456
+```
+
+Resultado:
+
+```text
+login realizado
+sessão salva
+redirecionamento Admin
+```
+
+---
+
+# 50. Login incorreto
+
+Testar:
+
+```text
+admin@rh.local
+senha-errada
+```
+
+Resultado:
+
+```text
+Usuário ou senha inválidos.
+```
+
+---
+
+# 51. Usuário inativo
+
+Testar:
+
+```text
+inativo@rh.local
+123456
+```
+
+Resultado:
+
+```text
+Usuário inativo.
+```
+
+---
+
+# 52. Recuperar senha
+
+Acessar:
+
+```text
+/recuperar-senha
+```
+
+Informar:
+
+```text
+admin@rh.local
+```
+
+Resultado:
+
+```text
+Se o e-mail estiver cadastrado, você receberá instruções para redefinir sua senha.
+```
+
+---
+
+# 53. Redefinir senha
+
+Acessar:
+
+```text
+/redefinir-senha?token=reset-token-admin-123
+```
+
+Informar:
+
+```text
+Nova senha: 654321
+Confirmar: 654321
+```
+
+Resultado:
+
+```text
+Senha redefinida com sucesso.
+```
+
+Depois redirecionar para:
+
+```text
+/login
+```
+
+---
+
+# 54. Critérios de aceite
+
+- [ ] Projeto `frontend/auth` criado.
+- [ ] Angular configurado.
+- [ ] TypeScript configurado.
+- [ ] Angular CLI configurado.
+- [ ] Angular Router configurado.
+- [ ] Rota `/login` criada.
+- [ ] Rota `/recuperar-senha` criada.
+- [ ] Rota `/redefinir-senha` criada.
+- [ ] Layout Auth criado.
+- [ ] LoginPage criada.
+- [ ] ForgotPasswordPage criada.
+- [ ] ResetPasswordPage criada.
+- [ ] `users.json` criado.
+- [ ] `reset-tokens.json` criado.
+- [ ] `auth-messages.json` criado.
+- [ ] Tipos TypeScript criados.
+- [ ] `auth.service.ts` criado.
+- [ ] `auth.api.ts` preparado.
+- [ ] `auth.storage.ts` criado.
+- [ ] Login mockado funciona.
+- [ ] Usuário inativo é tratado.
+- [ ] Senha inválida é tratada.
+- [ ] Sessão mockada é salva.
+- [ ] Logout remove sessão.
+- [ ] Recuperação de senha mockada funciona.
+- [ ] Redefinição de senha mockada funciona.
+- [ ] Loading implementado.
+- [ ] Mensagens de erro implementadas.
+- [ ] Mensagens de sucesso implementadas.
+- [ ] Mostrar/ocultar senha implementado.
+- [ ] `environment.ts` criado.
+- [ ] `environment.development.ts` criado.
+- [ ] `environment.homolog.ts` criado.
+- [ ] `environment.production.ts` criado.
+- [ ] `environment.docker.ts` criado.
+- [ ] Configurações registradas no `angular.json`.
+- [ ] URLs centralizadas nos arquivos de ambiente.
+- [ ] Nenhuma URL hardcoded em páginas.
+- [ ] Layout responsivo.
+- [ ] README criado.
+- [ ] `npm run lint` sem erro.
+- [ ] `npm run build` sem erro.
+
+---
+
+# 55. Fora de escopo
+
+Não criar nesta task:
+
+```text
+Backend C#
+API real
+JWT real
+Refresh Token
+OAuth
+Google Login
+Microsoft Login
+2FA
+MFA
+Captcha
+Banco de dados
+Envio de e-mail real
+SMS
+Alteração persistente de senha
+Controle de permissões real
+Cookie HttpOnly
+SSO
+```
+
+---
+
+# 56. Regras importantes de segurança
+
+Esta implementação é um mock de desenvolvimento.
+
+Nunca utilizar em produção:
+
+```text
+senha em JSON
+token fictício
+localStorage como solução final
+validação apenas no frontend
+```
+
+Quando existir backend real:
+
+```text
+senha deve ser validada no servidor
+token deve vir do backend
+senhas devem usar hash no servidor
+sessão deve seguir arquitetura de segurança definida
+recuperação deve usar token temporário real
+```
+
+---
+
+# 57. Instruções para IA / Copilot
+
+Ao executar esta task:
+
+1. Criar o módulo `frontend/auth`.
+2. Criar todas as páginas descritas.
+3. Criar todos os arquivos JSON de mock.
+4. Não criar backend.
+5. Não criar API Mock C#.
+6. Não instalar bibliotecas sem necessidade.
+7. Não utilizar `any`.
+8. Não acessar JSON diretamente nas páginas.
+9. Não executar chamadas HTTP diretamente nas páginas.
+10. Centralizar lógica no `auth.service.ts`.
+11. Centralizar URLs nos arquivos `environment*.ts`.
+12. Não hardcodar URLs.
+13. Implementar loading.
+14. Implementar tratamento de erro.
+15. Implementar sucesso.
+16. Implementar sessão mockada.
+17. Não retornar senha no usuário autenticado.
+18. Não tentar persistir alterações dentro do JSON.
+19. Criar README detalhado.
+20. Executar `npm run lint`.
+21. Executar `npm run build`.
+22. Corrigir erros encontrados.
+23. Validar manualmente Login.
+24. Validar recuperação de senha.
+25. Validar redefinição de senha.
+26. Manter código simples e didático.
