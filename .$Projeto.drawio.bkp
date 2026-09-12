@@ -1,0 +1,13 @@
+<mxfile host="Electron" modified="2026-09-12T00:49:29.695Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.0.4 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="FzjMUKjKgLoNxUqheu8o" version="24.0.4" type="device">
+  <diagram name="Página-1" id="syqWaJcbfG0O2vxk-3Qr">
+    <mxGraphModel dx="1434" dy="836" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="hkEDpILvArS5rZqvmVoo-1" value="Fluxo de uma API" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="60" width="760" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
