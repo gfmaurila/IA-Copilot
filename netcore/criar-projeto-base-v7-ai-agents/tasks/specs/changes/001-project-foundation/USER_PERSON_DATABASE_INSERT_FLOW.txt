@@ -1,0 +1,1232 @@
+USER / PERSON DATA MODEL
+DOCUMENTAÇÃO DETALHADA DO FLUXO DE INSERTS
+==========================================
+
+1. OBJETIVO
+===========
+
+Este documento descreve a ordem correta de persistência das tabelas do módulo de cadastro de usuário/pessoa.
+
+Ele documenta:
+
+- finalidade de cada tabela;
+- dependências entre tabelas;
+- chaves estrangeiras;
+- ordem do primeiro ao último INSERT;
+- tabelas 1:N e N:N;
+- fluxo do cadastro completo em etapas;
+- ordem de seed/fake data nas migrations;
+- ordem inversa para Down()/remoção;
+- pontos de autenticação, autorização e auditoria.
+
+Padrão de nomenclatura:
+
+TABELAS = UPPER_SNAKE_CASE
+CAMPOS  = UPPER_SNAKE_CASE
+
+
+2. ORDEM GLOBAL DE INSERT
+=========================
+
+Ordem recomendada respeitando as Foreign Keys:
+
+01. ORGANIZATION
+02. USER_GROUP
+03. CONTACT_TYPE
+04. RESOURCE
+05. PERMISSION
+06. ROLE
+07. ROLE_PERMISSION
+08. PERSON
+09. PERSON_DOCUMENT
+10. PERSON_CONTACT
+11. ADDRESS
+12. USER_ACCOUNT
+13. USER_ROLE
+14. USER_PREFERENCE
+15. REFRESH_TOKEN
+16. USER_TOKEN
+17. LOGIN_ATTEMPT
+18. AUDIT_LOG
+
+Nem todo cadastro de usuário insere em todas essas tabelas.
+
+No cadastro inicial, normalmente o fluxo transacional termina em:
+
+PERSON
+PERSON_DOCUMENT
+PERSON_CONTACT
+ADDRESS
+USER_ACCOUNT
+USER_ROLE
+USER_PREFERENCE
+AUDIT_LOG
+
+REFRESH_TOKEN, USER_TOKEN e LOGIN_ATTEMPT são preenchidas conforme o uso do sistema.
+
+
+3. ORGANIZATION
+===============
+
+Finalidade:
+Representa empresa, cliente, tenant, instituição ou organização principal.
+
+Campos principais:
+
+ID
+    PK.
+
+CODE
+    Código único da organização.
+
+LEGAL_NAME
+    Razão social.
+
+TRADE_NAME
+    Nome fantasia.
+
+TAX_ID
+    Identificação fiscal.
+
+EMAIL
+    E-mail principal.
+
+PHONE
+    Telefone principal.
+
+WEBSITE
+    Site.
+
+TIME_ZONE
+    Fuso horário padrão.
+
+LOCALE
+    Idioma/localidade padrão.
+
+STATUS
+    Estado do registro.
+
+CREATED_AT
+UPDATED_AT
+DELETED_AT
+
+Dependências:
+Nenhuma.
+
+É criada antes de:
+USER_GROUP
+ROLE
+
+
+4. USER_GROUP
+=============
+
+Finalidade:
+Agrupa usuários por área, departamento, unidade ou equipe.
+
+Exemplos:
+ADMINISTRATION
+FINANCE
+SUPPORT
+DEVELOPMENT
+
+Campos:
+
+ID
+    PK.
+
+ORGANIZATION_ID
+    FK -> ORGANIZATION.ID
+
+CODE
+NAME
+DESCRIPTION
+STATUS
+CREATED_AT
+UPDATED_AT
+DELETED_AT
+
+Dependência:
+ORGANIZATION
+
+Fluxo:
+
+INSERT ORGANIZATION
+    -> ORGANIZATION_ID
+
+INSERT USER_GROUP
+    ORGANIZATION_ID = ORGANIZATION_ID
+
+
+5. CONTACT_TYPE
+===============
+
+Finalidade:
+Catálogo dos tipos de contato aceitos pelo sistema.
+
+Dados iniciais recomendados:
+
+PHONE
+MOBILE
+EMAIL
+WHATSAPP
+TELEGRAM
+OTHER
+
+Campos:
+
+ID
+    PK.
+
+CODE
+    Código único.
+
+NAME
+    Nome para exibição.
+
+DESCRIPTION
+    Descrição.
+
+VALIDATION_PATTERN
+    Regex/regra opcional de validação.
+
+MAX_LENGTH
+    Limite do valor.
+
+IS_SYSTEM
+    Indica tipo protegido do sistema.
+
+STATUS
+CREATED_AT
+UPDATED_AT
+DELETED_AT
+
+Dependências:
+Nenhuma.
+
+Deve existir antes de PERSON_CONTACT.
+
+
+6. RESOURCE
+===========
+
+Finalidade:
+Representa tela, módulo, menu, rota ou recurso protegido da aplicação.
+
+Campos:
+
+ID
+CODE
+NAME
+ROUTE
+MODULE
+DISPLAY_ORDER
+ICON
+PARENT_RESOURCE_ID
+STATUS
+CREATED_AT
+UPDATED_AT
+
+PARENT_RESOURCE_ID:
+FK opcional para RESOURCE.ID.
+
+Isso permite recursos hierárquicos.
+
+Exemplo:
+
+ADMINISTRATION
+    USERS
+    ROLES
+    PERMISSIONS
+
+Ordem:
+
+INSERT recurso pai
+INSERT recursos filhos
+
+
+7. PERMISSION
+=============
+
+Finalidade:
+Representa uma ação permitida sobre um RESOURCE.
+
+Exemplos:
+
+USER_READ
+USER_CREATE
+USER_UPDATE
+USER_DELETE
+
+Campos:
+
+ID
+RESOURCE_ID
+CODE
+ACTION
+DESCRIPTION
+STATUS
+CREATED_AT
+UPDATED_AT
+
+RESOURCE_ID:
+FK -> RESOURCE.ID
+
+Dependência:
+RESOURCE
+
+Fluxo:
+
+INSERT RESOURCE
+INSERT PERMISSION
+
+
+8. ROLE
+=======
+
+Finalidade:
+Perfil de acesso do sistema.
+
+Exemplos:
+
+ADMIN
+OPERATOR
+CUSTOMER
+SUPPORT
+
+Campos:
+
+ID
+ORGANIZATION_ID
+CODE
+NAME
+DESCRIPTION
+IS_SYSTEM
+STATUS
+CREATED_AT
+UPDATED_AT
+DELETED_AT
+
+ORGANIZATION_ID:
+FK opcional -> ORGANIZATION.ID.
+
+ROLE global pode ter ORGANIZATION_ID = NULL.
+
+ROLE específica pertence a uma ORGANIZATION.
+
+
+9. ROLE_PERMISSION
+==================
+
+Finalidade:
+Relacionamento N:N entre ROLE e PERMISSION.
+
+Campos:
+
+ID
+ROLE_ID
+PERMISSION_ID
+IS_ALLOWED
+CREATED_AT
+
+ROLE_ID:
+FK -> ROLE.ID
+
+PERMISSION_ID:
+FK -> PERMISSION.ID
+
+Ordem obrigatória:
+
+1. RESOURCE
+2. PERMISSION
+3. ROLE
+4. ROLE_PERMISSION
+
+Exemplo:
+
+ADMIN
+    USER_READ
+    USER_CREATE
+    USER_UPDATE
+    USER_DELETE
+
+
+10. PERSON
+==========
+
+Finalidade:
+Entidade principal dos dados pessoais.
+
+Importante:
+
+PERSON NÃO representa login.
+
+Uma pessoa pode existir sem ter USER_ACCOUNT.
+
+Campos:
+
+ID
+FIRST_NAME
+MIDDLE_NAME
+LAST_NAME
+PREFERRED_NAME
+BIRTH_DATE
+GENDER
+MARITAL_STATUS
+NATIONALITY
+AVATAR_URL
+STATUS
+CREATED_AT
+UPDATED_AT
+DELETED_AT
+
+Dependências:
+Nenhuma.
+
+É o registro pai de:
+
+PERSON_DOCUMENT
+PERSON_CONTACT
+ADDRESS
+USER_ACCOUNT
+
+
+11. PERSON_DOCUMENT
+===================
+
+Finalidade:
+Armazena N documentos de uma pessoa.
+
+Relacionamento:
+
+PERSON 1:N PERSON_DOCUMENT
+
+Campos:
+
+ID
+PERSON_ID
+DOCUMENT_TYPE
+DOCUMENT_NUMBER
+ISSUER
+ISSUING_STATE
+ISSUE_DATE
+EXPIRATION_DATE
+COUNTRY_CODE
+IS_PRIMARY
+STATUS
+CREATED_AT
+UPDATED_AT
+DELETED_AT
+
+PERSON_ID:
+FK -> PERSON.ID
+
+Exemplos de documentos:
+
+CPF
+RG
+CNH
+PASSPORT
+
+Fluxo:
+
+INSERT PERSON
+obter PERSON_ID
+
+INSERT PERSON_DOCUMENT
+    PERSON_ID = PERSON_ID
+
+Pode haver múltiplos INSERTs.
+
+
+12. PERSON_CONTACT
+==================
+
+Finalidade:
+Armazena quantidade ilimitada de contatos por pessoa.
+
+Relacionamentos:
+
+PERSON 1:N PERSON_CONTACT
+CONTACT_TYPE 1:N PERSON_CONTACT
+
+Campos:
+
+ID
+PERSON_ID
+CONTACT_TYPE_ID
+CONTACT_VALUE
+LABEL
+IS_PRIMARY
+IS_VERIFIED
+VERIFIED_AT
+STATUS
+CREATED_AT
+UPDATED_AT
+DELETED_AT
+
+PERSON_ID:
+FK -> PERSON.ID
+
+CONTACT_TYPE_ID:
+FK -> CONTACT_TYPE.ID
+
+CONTACT_VALUE:
+Valor efetivo.
+
+Exemplos:
+
+EMAIL:
+usuario@email.com
+
+MOBILE:
++55 51 99999-1111
+
+WHATSAPP:
++55 51 99999-1111
+
+PHONE:
++55 51 3333-4444
+
+LABEL:
+
+PERSONAL
+WORK
+HOME
+EMERGENCY
+
+Uma pessoa pode ter:
+
+2 e-mails
+3 celulares
+2 WhatsApp
+1 telefone residencial
+1 telefone comercial
+
+Não existe limite estrutural.
+
+Fluxo:
+
+1. CONTACT_TYPE deve existir.
+2. PERSON deve existir.
+3. Para cada contato:
+
+INSERT PERSON_CONTACT
+
+
+13. ADDRESS
+===========
+
+Finalidade:
+Armazena N endereços para uma pessoa.
+
+Relacionamento:
+
+PERSON 1:N ADDRESS
+
+Campos:
+
+ID
+PERSON_ID
+ADDRESS_TYPE
+POSTAL_CODE
+STREET
+NUMBER
+COMPLEMENT
+DISTRICT
+CITY
+STATE
+COUNTRY_CODE
+LATITUDE
+LONGITUDE
+IS_PRIMARY
+STATUS
+CREATED_AT
+UPDATED_AT
+DELETED_AT
+
+PERSON_ID:
+FK -> PERSON.ID
+
+Tipos comuns:
+
+HOME
+WORK
+BILLING
+SHIPPING
+OTHER
+
+Fluxo:
+
+INSERT PERSON
+
+para cada endereço:
+
+INSERT ADDRESS
+    PERSON_ID = PERSON_ID
+
+
+14. USER_ACCOUNT
+================
+
+Finalidade:
+Armazena credenciais, autenticação e segurança.
+
+PERSON:
+dados pessoais.
+
+USER_ACCOUNT:
+acesso ao sistema.
+
+Campos:
+
+ID
+GROUP_ID
+PERSON_ID
+USERNAME
+EMAIL
+PASSWORD_HASH
+PASSWORD_CHANGED_AT
+EMAIL_VERIFIED_AT
+PHONE_VERIFIED_AT
+LAST_LOGIN_AT
+LAST_LOGIN_IP
+FAILED_LOGIN_ATTEMPTS
+LOCKED_UNTIL
+MUST_CHANGE_PASSWORD
+TWO_FACTOR_ENABLED
+STATUS
+CREATED_AT
+UPDATED_AT
+DELETED_AT
+
+PERSON_ID:
+FK -> PERSON.ID
+
+GROUP_ID:
+FK opcional -> USER_GROUP.ID
+
+USERNAME:
+único.
+
+EMAIL:
+único.
+
+PASSWORD_HASH:
+nunca armazenar senha em texto puro.
+
+Ordem:
+
+PERSON deve existir.
+USER_GROUP deve existir quando informado.
+
+Depois:
+
+INSERT USER_ACCOUNT
+
+
+15. USER_ROLE
+=============
+
+Finalidade:
+Associa usuários a perfis de acesso.
+
+Relacionamento:
+
+USER_ACCOUNT N:N ROLE
+
+Campos:
+
+ID
+USER_ID
+ROLE_ID
+ASSIGNED_AT
+ASSIGNED_BY
+EXPIRES_AT
+
+USER_ID:
+FK -> USER_ACCOUNT.ID
+
+ROLE_ID:
+FK -> ROLE.ID
+
+Um usuário pode ter várias roles.
+
+Fluxo:
+
+INSERT USER_ACCOUNT
+
+para cada perfil:
+
+INSERT USER_ROLE
+
+
+16. USER_PREFERENCE
+===================
+
+Finalidade:
+Preferências individuais do usuário.
+
+Campos:
+
+ID
+USER_ID
+ALLOW_EMAIL
+ALLOW_SMS
+ALLOW_WHATSAPP
+ALLOW_PUSH
+LANGUAGE
+TIME_ZONE
+THEME
+DATE_FORMAT
+CREATED_AT
+UPDATED_AT
+
+USER_ID:
+FK -> USER_ACCOUNT.ID
+
+Relacionamento esperado:
+
+USER_ACCOUNT 1:1 USER_PREFERENCE
+
+USER_ID deve ser único.
+
+Fluxo:
+
+INSERT USER_ACCOUNT
+INSERT USER_PREFERENCE
+
+
+17. REFRESH_TOKEN
+=================
+
+Finalidade:
+Renovação segura da sessão/JWT.
+
+Campos:
+
+ID
+USER_ID
+TOKEN_HASH
+EXPIRES_AT
+CREATED_AT
+REVOKED_AT
+REPLACED_BY_TOKEN_ID
+CREATED_BY_IP
+REVOKED_BY_IP
+USER_AGENT
+
+USER_ID:
+FK -> USER_ACCOUNT.ID
+
+Não deve ser criado obrigatoriamente durante o cadastro.
+
+Fluxo normal:
+
+LOGIN válido
+    -> gerar refresh token
+    -> armazenar hash
+    -> INSERT REFRESH_TOKEN
+
+Nunca persistir token puro.
+
+
+18. USER_TOKEN
+==============
+
+Finalidade:
+Tokens temporários.
+
+Usos:
+
+PASSWORD_RESET
+EMAIL_VERIFICATION
+PHONE_VERIFICATION
+ACCOUNT_ACTIVATION
+
+Campos:
+
+ID
+USER_ID
+TOKEN_TYPE
+TOKEN_HASH
+EXPIRES_AT
+USED_AT
+REQUESTED_BY_IP
+CREATED_AT
+
+USER_ID:
+FK -> USER_ACCOUNT.ID
+
+Exemplo:
+
+usuário solicita recuperação de senha
+
+    -> localizar USER_ACCOUNT
+    -> gerar token
+    -> calcular hash
+    -> INSERT USER_TOKEN
+    -> enviar token original ao usuário
+
+
+19. LOGIN_ATTEMPT
+=================
+
+Finalidade:
+Registrar tentativas de autenticação.
+
+Campos:
+
+ID
+USER_ID
+USERNAME_OR_EMAIL
+IP_ADDRESS
+USER_AGENT
+IS_SUCCESS
+FAILURE_REASON
+ATTEMPTED_AT
+
+USER_ID:
+FK opcional -> USER_ACCOUNT.ID
+
+É opcional porque um login pode utilizar um usuário inexistente.
+
+Para cada tentativa:
+
+INSERT LOGIN_ATTEMPT
+
+
+20. AUDIT_LOG
+=============
+
+Finalidade:
+Auditoria das operações relevantes.
+
+Campos:
+
+ID
+USER_ID
+ENTITY_NAME
+ENTITY_ID
+ACTION
+OLD_VALUES
+NEW_VALUES
+IP_ADDRESS
+USER_AGENT
+CORRELATION_ID
+CREATED_AT
+
+USER_ID:
+FK opcional -> USER_ACCOUNT.ID
+
+Exemplos de ACTION:
+
+CREATE
+UPDATE
+DELETE
+LOGIN
+PASSWORD_CHANGE
+ROLE_ASSIGNMENT
+REGISTRATION_COMPLETED
+
+Exemplo final do cadastro:
+
+ENTITY_NAME = USER_ACCOUNT
+ENTITY_ID = USER_ACCOUNT_ID
+ACTION = REGISTRATION_COMPLETED
+
+
+21. CADASTRO COMPLETO EM ETAPAS
+==============================
+
+ETAPA 1 - PERSONAL DATA
+-----------------------
+
+Criar:
+
+PERSON
+
+Resultado:
+
+PERSON_ID
+
+
+ETAPA 2 - DOCUMENTS
+-------------------
+
+Para cada documento:
+
+INSERT PERSON_DOCUMENT
+
+FK:
+
+PERSON_ID
+
+
+ETAPA 3 - CONTACTS
+------------------
+
+Para cada contato:
+
+1. localizar CONTACT_TYPE
+2. INSERT PERSON_CONTACT
+
+FKs:
+
+PERSON_ID
+CONTACT_TYPE_ID
+
+
+ETAPA 4 - ADDRESSES
+-------------------
+
+Para cada endereço:
+
+INSERT ADDRESS
+
+FK:
+
+PERSON_ID
+
+
+ETAPA 5 - ACCOUNT
+-----------------
+
+Criar:
+
+USER_ACCOUNT
+
+FKs:
+
+PERSON_ID
+GROUP_ID
+
+Resultado:
+
+USER_ACCOUNT_ID
+
+
+ETAPA 6 - ROLES
+---------------
+
+Para cada role selecionada:
+
+INSERT USER_ROLE
+
+FKs:
+
+USER_ACCOUNT_ID
+ROLE_ID
+
+
+ETAPA 7 - PREFERENCES
+---------------------
+
+Criar:
+
+USER_PREFERENCE
+
+FK:
+
+USER_ACCOUNT_ID
+
+
+ETAPA 8 - REVIEW & FINISH
+-------------------------
+
+Validar todos os dados.
+
+Se válidos:
+
+INSERT AUDIT_LOG
+    ACTION = REGISTRATION_COMPLETED
+
+Retornar:
+
+PERSON_ID
+USER_ACCOUNT_ID
+
+
+22. TRANSAÇÃO RECOMENDADA
+=========================
+
+Cadastro completo:
+
+BEGIN TRANSACTION
+
+INSERT PERSON
+
+INSERT PERSON_DOCUMENT...
+INSERT PERSON_CONTACT...
+INSERT ADDRESS...
+
+INSERT USER_ACCOUNT
+
+INSERT USER_ROLE...
+INSERT USER_PREFERENCE
+
+INSERT AUDIT_LOG
+
+COMMIT TRANSACTION
+
+Se qualquer etapa obrigatória falhar:
+
+ROLLBACK TRANSACTION
+
+
+23. PRIMEIRO AO ÚLTIMO INSERT - EXEMPLO COMPLETO
+================================================
+
+Configuração/base:
+
+01. INSERT ORGANIZATION
+02. INSERT USER_GROUP
+
+03. INSERT CONTACT_TYPE PHONE
+04. INSERT CONTACT_TYPE MOBILE
+05. INSERT CONTACT_TYPE EMAIL
+06. INSERT CONTACT_TYPE WHATSAPP
+07. INSERT CONTACT_TYPE TELEGRAM
+08. INSERT CONTACT_TYPE OTHER
+
+09. INSERT RESOURCE
+10. INSERT RESOURCE
+11. INSERT RESOURCE
+
+12. INSERT PERMISSION
+13. INSERT PERMISSION
+14. INSERT PERMISSION
+15. INSERT PERMISSION
+
+16. INSERT ROLE ADMIN
+17. INSERT ROLE OPERATOR
+18. INSERT ROLE CUSTOMER
+
+19. INSERT ROLE_PERMISSION...
+    repetir para todas as permissões necessárias.
+
+
+Cadastro de uma pessoa:
+
+20. INSERT PERSON
+
+21. INSERT PERSON_DOCUMENT
+22. INSERT PERSON_DOCUMENT
+    repetir conforme documentos.
+
+23. INSERT PERSON_CONTACT EMAIL
+24. INSERT PERSON_CONTACT MOBILE
+25. INSERT PERSON_CONTACT WHATSAPP
+26. INSERT PERSON_CONTACT PHONE
+    repetir conforme necessidade.
+
+27. INSERT ADDRESS HOME
+28. INSERT ADDRESS WORK
+    repetir conforme necessidade.
+
+29. INSERT USER_ACCOUNT
+
+30. INSERT USER_ROLE
+31. INSERT USER_ROLE
+    repetir conforme roles.
+
+32. INSERT USER_PREFERENCE
+
+33. INSERT AUDIT_LOG
+    REGISTRATION_COMPLETED
+
+
+Após cadastro:
+
+34. INSERT LOGIN_ATTEMPT
+
+35. INSERT REFRESH_TOKEN
+    após login válido.
+
+36. INSERT USER_TOKEN
+    quando houver verificação, ativação ou recuperação.
+
+37+. INSERT AUDIT_LOG
+    para eventos posteriores.
+
+
+24. ORDEM DO DEVELOPMENT SEED
+=============================
+
+A migration de dados fake deve usar:
+
+01. ORGANIZATION
+02. USER_GROUP
+03. CONTACT_TYPE
+04. RESOURCE
+05. PERMISSION
+06. ROLE
+07. ROLE_PERMISSION
+08. PERSON
+09. PERSON_DOCUMENT
+10. PERSON_CONTACT
+11. ADDRESS
+12. USER_ACCOUNT
+13. USER_ROLE
+14. USER_PREFERENCE
+15. LOGIN_ATTEMPT
+16. REFRESH_TOKEN
+17. USER_TOKEN
+18. AUDIT_LOG
+
+
+25. FAKE DATA RECOMENDADO
+=========================
+
+Mínimo sugerido:
+
+1 ORGANIZATION
+
+3+ USER_GROUP
+
+6 CONTACT_TYPE:
+PHONE
+MOBILE
+EMAIL
+WHATSAPP
+TELEGRAM
+OTHER
+
+Recursos para:
+USERS
+PEOPLE
+ORGANIZATIONS
+ROLES
+PERMISSIONS
+
+Permissões:
+READ
+CREATE
+UPDATE
+DELETE
+
+Roles:
+ADMIN
+OPERATOR
+CUSTOMER
+
+10 PERSON
+
+10+ PERSON_DOCUMENT
+
+25+ PERSON_CONTACT
+
+10+ ADDRESS
+
+10 USER_ACCOUNT
+
+vários USER_ROLE
+
+10 USER_PREFERENCE
+
+LOGIN_ATTEMPT de exemplo
+
+AUDIT_LOG de exemplo
+
+
+26. ORDEM INVERSA - DOWN / REMOÇÃO
+==================================
+
+Para remover os seeds sem violar Foreign Keys:
+
+01. AUDIT_LOG
+02. LOGIN_ATTEMPT
+03. USER_TOKEN
+04. REFRESH_TOKEN
+05. USER_PREFERENCE
+06. USER_ROLE
+07. USER_ACCOUNT
+08. ADDRESS
+09. PERSON_CONTACT
+10. PERSON_DOCUMENT
+11. PERSON
+12. ROLE_PERMISSION
+13. ROLE
+14. PERMISSION
+15. RESOURCE
+16. CONTACT_TYPE
+17. USER_GROUP
+18. ORGANIZATION
+
+
+27. MAPA DE RELACIONAMENTOS
+===========================
+
+ORGANIZATION
+    1:N USER_GROUP
+    1:N ROLE
+
+USER_GROUP
+    1:N USER_ACCOUNT
+
+PERSON
+    1:N PERSON_DOCUMENT
+    1:N PERSON_CONTACT
+    1:N ADDRESS
+    1:0..1 USER_ACCOUNT
+
+CONTACT_TYPE
+    1:N PERSON_CONTACT
+
+USER_ACCOUNT
+    N:N ROLE através de USER_ROLE
+    1:1 USER_PREFERENCE
+    1:N REFRESH_TOKEN
+    1:N USER_TOKEN
+    1:N LOGIN_ATTEMPT
+    1:N AUDIT_LOG
+
+ROLE
+    N:N PERMISSION através de ROLE_PERMISSION
+
+RESOURCE
+    1:N PERMISSION
+    1:N RESOURCE através de PARENT_RESOURCE_ID
+
+
+28. REGRAS IMPORTANTES
+======================
+
+1. PERSON não deve armazenar senha.
+
+2. USER_ACCOUNT não deve substituir PERSON.
+
+3. Nunca persistir senha em texto puro.
+
+4. Nunca persistir refresh token puro.
+
+5. PERSON_CONTACT deve permitir N contatos por pessoa.
+
+6. CONTACT_TYPE é obrigatório para identificar o canal.
+
+7. PERSON deve existir antes de PERSON_DOCUMENT, PERSON_CONTACT e ADDRESS.
+
+8. PERSON deve existir antes de USER_ACCOUNT.
+
+9. USER_ACCOUNT deve existir antes de USER_ROLE e USER_PREFERENCE.
+
+10. RESOURCE deve existir antes de PERMISSION.
+
+11. ROLE e PERMISSION devem existir antes de ROLE_PERMISSION.
+
+12. O término do cadastro deve gerar AUDIT_LOG.
+
+13. Seeds devem seguir a ordem das Foreign Keys.
+
+14. Down() deve remover na ordem inversa.
+
+15. O cadastro completo deve preferencialmente ser transacional.
+
+16. IDs de seeds em migrations devem ser determinísticos para facilitar Up() e Down().
+
+17. E-mail, telefone e WhatsApp não devem ser colunas repetidas dentro de PERSON.
+
+18. Novos meios de contato devem ser adicionados em CONTACT_TYPE, sem alterar a estrutura de PERSON.
+
+FIM DO DOCUMENTO
+================
