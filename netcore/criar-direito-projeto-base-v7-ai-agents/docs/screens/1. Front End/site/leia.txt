@@ -1,0 +1,115 @@
+Claro. Seguindo o mesmo padrão, abaixo está a relação das telas do **1. Front End – Site**, sem incluir o Admin.
+
+```txt
+1. FRONT END - SITE
+LISTA DE TELAS
+
+01 - Home
+Página inicial do site, apresentando a identidade do escritório, chamada principal, áreas de atuação, diferenciais, equipe, depoimentos, conteúdos recentes e chamada para contato.
+
+02 - Sobre Nós
+Página institucional apresentando o escritório, história, propósito, valores, diferenciais e posicionamento da empresa.
+
+03 - Áreas de Atuação
+Página com a listagem de todas as especialidades e serviços jurídicos oferecidos pelo escritório.
+
+04 - Detalhe da Área de Atuação
+Página individual de uma especialidade jurídica, apresentando descrição completa, informações relacionadas e chamada para contato.
+
+05 - Nossa Equipe
+Página com a apresentação e listagem dos advogados e profissionais do escritório.
+
+06 - Perfil do Advogado
+Página individual do profissional contendo foto, nome, cargo, OAB, biografia, áreas de atuação, informações profissionais e redes sociais.
+
+07 - Artigos / Conteúdos
+Página com a listagem dos artigos, notícias e conteúdos jurídicos publicados pelo escritório.
+
+08 - Detalhe do Artigo
+Página para leitura completa de um artigo, contendo título, imagem, data, autor, conteúdo e informações relacionadas.
+
+09 - Depoimentos
+Página ou seção dedicada aos depoimentos e avaliações de clientes do escritório.
+
+10 - Contato
+Página contendo informações de contato, endereço, telefone, WhatsApp, e-mail, mapa e formulário para envio de mensagem.
+
+11 - Confirmação de Envio do Contato
+Tela exibida após o envio correto do formulário, confirmando que a mensagem foi recebida.
+
+12 - Resultado de Busca
+Página com os resultados encontrados a partir de uma pesquisa realizada no site.
+
+13 - Política de Privacidade
+Página contendo as informações sobre privacidade e tratamento de dados pessoais.
+
+14 - Termos de Uso
+Página contendo os termos e condições de utilização do site.
+
+15 - Política de Cookies
+Página contendo informações sobre os cookies utilizados pelo site.
+
+16 - Preferências de Cookies
+Modal ou tela para o visitante escolher quais categorias de cookies deseja permitir.
+
+17 - Página 404
+Página apresentada quando o visitante tenta acessar uma URL ou conteúdo inexistente.
+
+18 - Página de Erro
+Tela apresentada quando ocorre algum erro inesperado durante a navegação.
+
+19 - Nenhum Resultado Encontrado
+Estado de tela utilizado quando uma busca, filtro ou listagem não possui resultados.
+
+20 - Menu Mobile
+Versão expandida da navegação principal para smartphones e dispositivos móveis.
+
+
+TOTAL: 20 TELAS / ESTADOS DO FRONT END - SITE
+
+
+ESTRUTURA PRINCIPAL DO MENU DO SITE:
+
+- Home
+- Sobre Nós
+- Áreas de Atuação
+- Nossa Equipe
+- Artigos
+- Depoimentos
+- Contato
+
+
+ESTRUTURA DO RODAPÉ:
+
+- Logo
+- Descrição institucional
+- Links rápidos
+- Áreas de atuação
+- Endereço
+- Telefone
+- WhatsApp
+- E-mail
+- Redes sociais
+- Política de Privacidade
+- Termos de Uso
+- Política de Cookies
+- Copyright
+
+
+OBSERVAÇÃO:
+
+O FRONT END - SITE é o site institucional público.
+
+Não fazem parte deste módulo:
+
+- Login de cliente
+- Área do cliente
+- Área do advogado
+- Processos
+- Documentos privados
+- Financeiro
+- Agenda interna
+- Painel administrativo
+
+Essas funcionalidades pertencem aos demais módulos do projeto.
+```

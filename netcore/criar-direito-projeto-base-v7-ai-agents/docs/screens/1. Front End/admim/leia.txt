@@ -1,0 +1,186 @@
+ADMIN - FRONT END SITE
+LISTA DE TELAS
+
+01 - Login
+Tela de autenticação para acesso ao painel administrativo.
+
+02 - Dashboard
+Visão geral do painel com indicadores, atalhos e informações resumidas do site.
+
+03 - Artigos - Listagem
+Listagem e gerenciamento dos artigos e conteúdos publicados no site.
+
+04 - Artigos - Novo / Editar
+Cadastro e edição de artigos, conteúdo, imagem, categoria, status e SEO.
+
+05 - Páginas - Listagem
+Listagem e gerenciamento das páginas institucionais do site.
+
+06 - Páginas - Nova / Editar
+Cadastro e edição de páginas, conteúdo, URL, status e configurações de SEO.
+
+07 - Mídia - Biblioteca
+Gerenciamento de imagens, arquivos e outros conteúdos utilizados no site.
+
+08 - Mídia - Upload
+Tela para envio de novas imagens e arquivos para a biblioteca de mídia.
+
+09 - Menu - Gerenciamento
+Configuração dos itens, links, ordem e estrutura do menu principal do site.
+
+10 - Depoimentos - Listagem
+Listagem e gerenciamento dos depoimentos exibidos no site.
+
+11 - Depoimentos - Novo / Editar
+Cadastro e edição de depoimentos de clientes.
+
+12 - Usuários - Listagem
+Gerenciamento dos usuários que possuem acesso ao painel administrativo.
+
+13 - Usuários - Novo / Editar
+Cadastro e edição de usuários, dados de acesso, perfil e permissões.
+
+14 - Configurações Gerais
+Configuração das informações gerais do site e do escritório.
+
+15 - Áreas de Atuação - Listagem
+Listagem e gerenciamento das especialidades jurídicas exibidas no site.
+
+16 - Área de Atuação - Nova / Editar
+Cadastro e edição de nome, descrição, ícone, imagem, conteúdo, ordem, destaque, status e SEO.
+
+17 - Equipe - Listagem
+Listagem e gerenciamento dos profissionais exibidos no site.
+
+18 - Equipe - Novo / Editar Advogado
+Cadastro e edição de foto, nome, cargo, OAB, biografia, áreas de atuação, contatos, redes sociais, ordem, destaque e status.
+
+19 - Home - Gerenciamento
+Gerenciamento das seções da página inicial, permitindo ativar, desativar, editar e alterar a ordem dos blocos.
+
+20 - Home - Editar Banner Principal
+Configuração do título, subtítulo, imagem de fundo, botões e chamadas principais da Home.
+
+21 - Home - Editar Seção Sobre
+Configuração dos textos, imagens e links da apresentação institucional exibida na Home.
+
+22 - Home - Áreas de Atuação em Destaque
+Seleção das áreas de atuação que serão apresentadas na página inicial.
+
+23 - Home - Equipe em Destaque
+Seleção dos profissionais que serão apresentados na página inicial.
+
+24 - Home - Depoimentos em Destaque
+Seleção e configuração dos depoimentos apresentados na Home.
+
+25 - Home - Artigos Recentes
+Configuração da quantidade e dos conteúdos recentes apresentados na página inicial.
+
+26 - Home - Chamada para Ação (CTA)
+Configuração do título, texto, imagem e botão da chamada para contato da página inicial.
+
+27 - Contato - Mensagens Recebidas
+Listagem das mensagens enviadas através do formulário de contato do site.
+
+28 - Contato - Detalhe da Mensagem
+Visualização completa da mensagem, dados do contato, status e observações administrativas.
+
+29 - Contato - Configurações
+Configuração do formulário, destinatários, informações de contato e comportamento das mensagens.
+
+30 - Rodapé - Configuração
+Configuração da logo, descrição, endereço, telefones, WhatsApp, e-mail, links, áreas de atuação, redes sociais e copyright.
+
+31 - SEO - Configurações Gerais
+Configuração do meta title padrão, meta description, palavras-chave e informações gerais de SEO.
+
+32 - SEO - Open Graph
+Configuração dos dados e imagens utilizados no compartilhamento do site em redes sociais.
+
+33 - SEO - Indexação e Robots
+Configuração das regras de indexação do site e arquivo robots.
+
+34 - SEO - Sitemap
+Visualização e configuração do sitemap utilizado pelos mecanismos de busca.
+
+35 - Redes Sociais
+Configuração dos links de Instagram, LinkedIn, Facebook, YouTube, X, WhatsApp e outras redes.
+
+36 - Integrações
+Configuração de serviços externos utilizados pelo site, como Google Analytics, Google Tag Manager, Google Maps e WhatsApp.
+
+37 - Perfil do Administrador
+Gerenciamento dos dados pessoais e informações da conta do administrador.
+
+38 - Perfil - Alterar Senha
+Alteração da senha do usuário autenticado no painel administrativo.
+
+39 - Recuperar Senha
+Tela para informar o e-mail e solicitar o envio do link de recuperação de senha.
+
+40 - Redefinir Senha
+Tela para informar a nova senha, confirmar a senha e concluir a recuperação da conta.
+
+41 - Notificações
+Visualização das notificações e atividades relacionadas ao painel administrativo.
+
+42 - Aparência / Identidade Visual
+Configuração da identidade visual do site, incluindo logo, favicon e elementos globais de aparência.
+
+43 - Formulários
+Gerenciamento dos formulários existentes no site.
+
+44 - Formulário - Novo / Editar
+Configuração dos campos, obrigatoriedades, mensagens e comportamento de um formulário.
+
+45 - Relatórios
+Visualização de informações e indicadores relacionados aos conteúdos, formulários e utilização do site.
+
+46 - Logs / Atividades
+Histórico das principais alterações realizadas pelos administradores no painel.
+
+47 - Permissões / Perfis de Acesso
+Configuração dos níveis de acesso e permissões dos usuários administrativos.
+
+48 - Página 404 - Editar
+Configuração do conteúdo apresentado quando uma página não for encontrada.
+
+49 - Política de Privacidade - Editar
+Gerenciamento do conteúdo da página de Política de Privacidade.
+
+50 - Termos de Uso - Editar
+Gerenciamento do conteúdo da página de Termos de Uso.
+
+
+TOTAL: 50 TELAS / FUNCIONALIDADES DO ADMIN
+
+
+ESTRUTURA PRINCIPAL DO MENU ADMIN:
+
+- Dashboard
+- Conteúdos
+  - Artigos
+  - Páginas
+  - Depoimentos
+- Áreas de Atuação
+- Equipe
+- Home
+- Contato
+- Formulários
+- Mídia
+- Menu
+- SEO
+- Aparência
+- Integrações
+- Usuários
+- Relatórios
+- Configurações
+  - Geral
+  - SEO
+  - Redes Sociais
+  - Integrações
+  - Rodapé
+- Perfil
+- Notificações
+- Logs / Atividades
+- Permissões
