@@ -55,3 +55,11 @@ Quando um Quality Gate falhar, o fluxo retorna ao agente responsável pela corre
 - Specs e Rules têm prioridade sobre convenções genéricas dos agentes.
 - Skills devem ser lidas sob demanda, somente quando necessárias.
 - Nenhuma tarefa é concluída sem passar pelos Quality Gates aplicáveis.
+
+## Continuidade e compatibilidade multi-IA
+
+Este é o ponto de entrada do Codex. O repositório também pode ser trabalhado por Claude Code e GitHub Copilot.
+
+Antes de implementar, leia `PROJECT.md`, `PROJECT-STATE.md`, `AI-WORKFLOW.md`, documentação, agentes/tasks, Composer, código, migrations e testes existentes.
+
+Preserve o fluxo v2 e os agentes existentes. Não recrie Laravel/scaffold, não troque MySQL/stack e não avance além da task solicitada.

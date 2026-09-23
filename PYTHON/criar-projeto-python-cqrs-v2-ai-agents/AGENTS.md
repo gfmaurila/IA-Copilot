@@ -39,3 +39,11 @@ Os agentes orquestram `tasks/rules`, `tasks/skills` e `tasks/specs`. Eles não s
 - Pydantic v2 define contratos HTTP;
 - não copiar MediatR ou padrões de C# literalmente;
 - usar Python idiomático, tipado e testável.
+
+## Continuidade e compatibilidade multi-IA
+
+Este é o ponto de entrada do Codex. O repositório também pode ser trabalhado por Claude Code e GitHub Copilot.
+
+Leia `PROJECT.md`, `PROJECT-STATE.md`, `AI-WORKFLOW.md`, documentação, agentes/tasks, configuração Python, código e testes antes de implementar.
+
+Preserve o fluxo v2 e os agentes existentes. Não recrie scaffold, não substitua CQRS/arquitetura, não troque a stack e não avance além da task solicitada.

@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "Edit",
+      "Write",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(composer:*)",
+      "Bash(php artisan:*)",
+      "Bash(phpunit:*)",
+      "Bash(./vendor/bin/pest:*)"
+    ]
+  }
+}
