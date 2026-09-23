@@ -52,3 +52,11 @@ Atualiza README/docs, variáveis de ambiente, comandos, endpoints, migrations e 
 `Developer -> Tester/Reviewer -> falha -> Developer -> nova validação`
 
 Nenhuma tarefa deve ser marcada como DONE com build/testes/review pendentes.
+
+## Continuidade e compatibilidade multi-IA
+
+Este arquivo é o ponto de entrada do Codex. O repositório também pode ser trabalhado por Claude Code e GitHub Copilot.
+
+Antes de implementar, leia `PROJECT.md`, `PROJECT-STATE.md`, `AI-WORKFLOW.md`, documentação, agentes/tasks, `package.json`, código e testes existentes.
+
+Preserve o fluxo v2 e os agentes já existentes. Não recrie scaffold, não troque a stack e não avance além da task solicitada.
