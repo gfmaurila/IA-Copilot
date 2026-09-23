@@ -42,3 +42,11 @@ Após implementar:
 - `tasks/reports/REVIEW_REPORT.md`
 
 Estado: `orchestration/state/PROJECT_STATE.md`.
+
+## Continuidade e compatibilidade multi-IA
+
+Este arquivo é o ponto de entrada do Codex. O projeto também pode ser trabalhado por Claude Code e GitHub Copilot.
+
+Antes de implementar, leia `PROJECT.md`, `PROJECT-STATE.md`, `AI-WORKFLOW.md`, documentação, Gradle, código e testes existentes.
+
+O projeto já possui estrutura: não recrie o scaffold, não substitua Hexagonal/CQRS e não avance além da task solicitada. Preserve contratos, ports, adapters, domínio, testes, migrations e configurações existentes.
