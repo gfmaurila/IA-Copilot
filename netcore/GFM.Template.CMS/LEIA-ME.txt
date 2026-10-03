@@ -1,0 +1,5 @@
+Abra COMECE.html no navegador.
+
+Lá aparece o que anexar como contexto (pasta ou zip) + o prompt para colar na IA.
+
+BYOAI: cada cliente/tenant pode usar a IA administrada pelo servidor, conectar seus próprios providers/credenciais ou combinar ambos em modo híbrido. Fallback para a IA do servidor somente ocorre quando explicitamente autorizado.
