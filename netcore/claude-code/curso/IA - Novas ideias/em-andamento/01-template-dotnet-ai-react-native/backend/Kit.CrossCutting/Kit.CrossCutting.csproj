@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Kit.CrossCutting - dependency injection composition and cross-cutting
+    concerns that are NOT tied to a single module: correlation id, result
+    mapping, cache abstractions, clock, feature flags plumbing, problem
+    details helpers.
+
+    HARD RULE: keep this project free of EF Core and of module-specific
+    business knowledge. It references no other Kit project.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Kit.CrossCutting</RootNamespace>
+    <AssemblyName>Kit.CrossCutting</AssemblyName>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
+  </ItemGroup>
+
+</Project>

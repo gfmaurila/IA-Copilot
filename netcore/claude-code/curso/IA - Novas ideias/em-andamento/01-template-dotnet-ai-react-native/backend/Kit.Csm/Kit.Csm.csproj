@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Kit.Csm - PRESERVED REFERENCE PROJECT, RESPONSIBILITY NOT YET DEFINED.
+
+    prompts.md §7: "Template.Btc / Template.Csm: preservar responsabilidades
+    dos projetos de referência. Não inventar novas responsabilidades."
+
+    The Kit packages do not contain a Csm reference project, so this library
+    is intentionally EMPTY of behaviour. Do NOT invent responsibilities for it.
+    When the real Csm reference project is supplied, mirror its concerns here
+    and its architecture into docs/architecture/*.drawio.
+
+    Tracked in docs/EXECUTION_PLAN.md as an open item.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Kit.Csm</RootNamespace>
+    <AssemblyName>Kit.Csm</AssemblyName>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+</Project>

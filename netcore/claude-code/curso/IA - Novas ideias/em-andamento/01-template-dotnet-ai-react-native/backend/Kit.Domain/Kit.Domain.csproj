@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Kit.Domain - the innermost layer.
+    Contains Aggregates, Entities, Value Objects, invariants, Domain Events,
+    Domain Validations, Domain Notifications and repository INTERFACES.
+
+    HARD RULE: this project must never reference EF Core, ASP.NET Core,
+    MediatR, Confluent.Kafka, Redis or any vendor SDK. If you need one of
+    those here, the abstraction belongs in Domain and the implementation in
+    Infrastructure.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Kit.Domain</RootNamespace>
+    <AssemblyName>Kit.Domain</AssemblyName>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+</Project>

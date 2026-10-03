@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Kit.Application - use case layer.
+    Contains Commands, Queries, Handlers, DTOs, presenters/mappers and the
+    ports (interfaces) that Infrastructure implements.
+
+    HARD RULE: no provider-specific code here. No MySqlConnector, no
+    DbContext, no HTTP calls to vendor APIs, no LLM vendor SDK.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Kit.Application</RootNamespace>
+    <AssemblyName>Kit.Application</AssemblyName>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kit.Domain\Kit.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+</Project>

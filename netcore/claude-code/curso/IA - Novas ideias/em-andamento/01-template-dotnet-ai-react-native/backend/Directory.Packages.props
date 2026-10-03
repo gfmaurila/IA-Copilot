@@ -1,0 +1,100 @@
+<Project>
+
+  <!--
+    Central Package Management (CPM). Every NuGet version used in the Kit
+    solution is declared exactly once here. Projects reference packages
+    WITHOUT a Version attribute.
+
+    Rule: do not bump versions "because a newer one exists".
+    Upgrade deliberately and validate migrations + integration tests.
+  -->
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <ItemGroup Label="Application">
+    <!-- MediatR 12/13 moved to a commercial license (Lucky Penny Software).
+         MediatR 14 is back on a reciprocal OSI license (RPL-1.5): commercial
+         use is allowed, but distributed modifications must stay open.
+         Review RPL-1.5 against your company's licensing policy before reusing
+         this template as a product. CQRS contracts live in
+         Kit.Application/Abstractions so the mediator can be replaced without
+         touching Domain or handlers. -->
+    <PackageVersion Include="MediatR" Version="14.2.0" />
+    <PackageVersion Include="FluentValidation" Version="12.1.1" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+  </ItemGroup>
+
+  <ItemGroup Label="Microsoft.Extensions">
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.10.0" />
+    <PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="10.10.0" />
+  </ItemGroup>
+
+  <ItemGroup Label="Persistence - MySQL is the default provider">
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12" />
+    <!--
+      Official Oracle provider for MySQL + EF Core. Chosen over Pomelo because
+      Pomelo.EntityFrameworkCore.MySql has no build for EF Core 10 (latest is
+      9.0.0 / EF Core 9). See docs/adr/ADR-0002-mysql-provider.md
+    -->
+    <PackageVersion Include="MySql.EntityFrameworkCore" Version="10.0.9" />
+    <!-- Provider-agnostic alternatives kept referenced ONLY by Infrastructure
+         so a future migration does not require rewriting Domain/Application. -->
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.12" />
+  </ItemGroup>
+
+  <ItemGroup Label="Messaging / Caching">
+    <PackageVersion Include="Confluent.Kafka" Version="2.15.1" />
+    <PackageVersion Include="StackExchange.Redis" Version="3.3.1" />
+  </ItemGroup>
+
+  <ItemGroup Label="API / Observability">
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.12" />
+    <!-- Rate limiting is part of the ASP.NET Core shared framework, not a package. -->
+    <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.2.3" />
+    <PackageVersion Include="prometheus-net.AspNetCore" Version="8.2.1" />
+  </ItemGroup>
+
+  <ItemGroup Label="Security">
+    <PackageVersion Include="BCrypt.Net-Next" Version="4.2.1" />
+    <!-- Token issuance/validation lives in Kit.Infrastructure so Kit.Api only
+         consumes Kit.Application ports. The JWT writer itself is an
+         infrastructure detail and never leaks into Domain or Application. -->
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.23.0" />
+  </ItemGroup>
+
+  <ItemGroup Label="Seeding">
+    <!-- Bogus is used only by the Demo/Stress seed generators and always with
+         a fixed random seed so generated data is reproducible. -->
+    <PackageVersion Include="Bogus" Version="35.6.5" />
+  </ItemGroup>
+
+  <ItemGroup Label="Testing">
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />
+    <PackageVersion Include="FluentAssertions" Version="8.11.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.12" />
+    <PackageVersion Include="NSubstitute" Version="6.2.0" />
+    <PackageVersion Include="Testcontainers.MySql" Version="4.15.0" />
+  </ItemGroup>
+
+</Project>

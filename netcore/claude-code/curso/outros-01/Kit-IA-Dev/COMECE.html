@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kit IA Dev — Comece aqui</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f3eb;
+    --bg-2: #efe8da;
+    --ink: #1c1914;
+    --muted: #5c564c;
+    --line: #d7cfc0;
+    --accent: #0f6b5c;
+    --accent-2: #c45c26;
+    --card: #fffdf8;
+    --shadow: 0 18px 50px rgba(28, 25, 20, 0.08);
+    --display: "Fraunces", Georgia, serif;
+    --sans: "Source Sans 3", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--sans);
+    background:
+      radial-gradient(1200px 600px at 10% -10%, #fff8e8 0%, transparent 55%),
+      radial-gradient(900px 500px at 100% 0%, #e7f2ef 0%, transparent 50%),
+      var(--bg);
+    line-height: 1.55;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 40px 20px 80px; }
+  .brand {
+    font-family: var(--display);
+    font-size: clamp(2.4rem, 6vw, 3.6rem);
+    line-height: 1.05;
+    margin: 0 0 12px;
+    letter-spacing: -0.02em;
+  }
+  .lede { font-size: 1.15rem; color: var(--muted); max-width: 38rem; margin: 0 0 28px; }
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    padding: 28px;
+    margin-bottom: 18px;
+  }
+  .step-label {
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    margin: 0 0 8px;
+  }
+  h2 { font-family: var(--display); font-size: 1.45rem; margin: 0 0 14px; }
+  .choices { display: grid; gap: 10px; }
+  label.choice {
+    display: flex; gap: 12px; align-items: flex-start;
+    border: 1px solid var(--line); padding: 14px 16px; cursor: pointer;
+    background: #fffaf2; transition: border-color .15s, background .15s;
+  }
+  label.choice:hover { border-color: var(--accent); }
+  label.choice:has(:checked) { border-color: var(--accent); background: #eef7f4; }
+  label.choice strong { display: block; }
+  label.choice span { color: var(--muted); font-size: 0.95rem; }
+  input[type="radio"], input[type="checkbox"] { margin-top: 4px; accent-color: var(--accent); }
+  .grid-2 { display: grid; gap: 10px; }
+  @media (min-width: 720px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+  .prompt-box {
+    width: 100%; min-height: 280px; resize: vertical;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.86rem; line-height: 1.45;
+    border: 1px solid var(--line); padding: 16px; background: #1c1914; color: #f4efe6;
+  }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+  button {
+    border: 0; cursor: pointer; font-family: var(--sans); font-weight: 700;
+    padding: 12px 18px; background: var(--accent); color: white;
+  }
+  button.secondary { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  button:hover { filter: brightness(1.05); }
+  .hint { color: var(--muted); font-size: 0.95rem; margin: 10px 0 0; }
+  .ok { color: var(--accent); font-weight: 700; min-height: 1.2em; }
+  .foot { margin-top: 28px; color: var(--muted); font-size: 0.92rem; }
+  .foot a { color: var(--accent-2); }
+  .context-box {
+    background: #eef7f4;
+    border: 1px solid #b7d9d1;
+    padding: 16px 18px;
+    margin: 0 0 14px;
+  }
+  .context-box strong { display: block; margin-bottom: 8px; }
+  .context-box ul { margin: 0; padding-left: 1.15rem; color: var(--ink); }
+  .context-box li { margin: 4px 0; }
+  .context-box .how { margin-top: 10px; color: var(--muted); font-size: 0.92rem; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="step-label">Kit IA Dev</p>
+    <h1 class="brand">Você não precisa decorar pastas.</h1>
+    <p class="lede">Responda duas perguntas. Copie o prompt. Cole na sua IA. Ela te guia no setup — arquivo por arquivo — no seu ritmo.</p>
+
+    <section class="panel">
+      <p class="step-label">Passo 1</p>
+      <h2>O que você baixou?</h2>
+      <div class="choices" id="packs">
+        <label class="choice"><input type="checkbox" name="pack" value="kit" checked disabled> <div><strong>Kit IA Dev</strong><span>Sempre — guia, template, 10 skills, Notion</span></div></label>
+        <label class="choice"><input type="checkbox" name="pack" value="templates" id="packTemplates"> <div><strong>Templates por Stack</strong><span>Next, Node API, React Native, Python, Monorepo, Microsserviços, PHP/Laravel</span></div></label>
+        <label class="choice"><input type="checkbox" name="pack" value="advanced" id="packAdvanced"> <div><strong>Skills Avançadas</strong><span>+8 skills e atualizações das skills do kit</span></div></label>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="step-label">Passo 2</p>
+      <h2>Como você usa IA no dia a dia?</h2>
+      <div class="choices grid-2" id="tools">
+        <label class="choice"><input type="radio" name="tool" value="claude" checked> <div><strong>Claude Code</strong><span>Terminal / VS Code</span></div></label>
+        <label class="choice"><input type="radio" name="tool" value="cursor"> <div><strong>Cursor</strong><span>Editor com agente</span></div></label>
+        <label class="choice"><input type="radio" name="tool" value="other"> <div><strong>Outra ferramenta</strong><span>Copilot, Windsurf, Codex, Gemini CLI…</span></div></label>
+        <label class="choice"><input type="radio" name="tool" value="web"> <div><strong>Só pela web</strong><span>Claude.ai, ChatGPT, Gemini — sem instalar</span></div></label>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="step-label">Passo 3</p>
+      <h2>O que passar como contexto</h2>
+      <div class="context-box" id="contextBox" aria-live="polite"></div>
+      <h2>Cole isto na sua IA</h2>
+      <p class="hint">Depois de anexar o contexto acima, cole o prompt e envie. A IA pergunta o que faltar e conduz a instalação.</p>
+      <textarea class="prompt-box" id="prompt" readonly></textarea>
+      <div class="actions">
+        <button type="button" id="copyBtn">Copiar prompt</button>
+        <button type="button" class="secondary" id="refreshBtn">Atualizar texto</button>
+      </div>
+      <p class="ok" id="copyStatus" aria-live="polite"></p>
+    </section>
+
+    <p class="foot">
+      Prefere ler o passo a passo completo? Abra o PDF em <code>1-Guia-PTBR/</code>.
+      Prompts web: <code>4-Prompts-Notion/</code>.
+    </p>
+  </div>
+
+<script>
+(function () {
+  function selectedTool() {
+    var el = document.querySelector('input[name="tool"]:checked');
+    return el ? el.value : "claude";
+  }
+  function hasTemplates() { return document.getElementById("packTemplates").checked; }
+  function hasAdvanced() { return document.getElementById("packAdvanced").checked; }
+
+  function toolLabel(tool) {
+    if (tool === "claude") return "Claude Code";
+    if (tool === "cursor") return "Cursor";
+    if (tool === "web") return "somente pela web (Claude.ai / ChatGPT / Gemini)";
+    return "outra ferramenta de IA de código";
+  }
+
+  function skillInstallPath(tool) {
+    if (tool === "claude") return "Claude Code: global `~/.claude/skills/` ou por projeto `.claude/skills/`";
+    if (tool === "cursor") return "Cursor: por projeto `.cursor/skills/`";
+    if (tool === "other") return "pergunte à ferramenta onde colocar pastas no padrão Agent Skills (SKILL.md), ou use `3-Skills/COMO-INSTALAR.md`";
+    return "não instalar skills locais — usar Notion";
+  }
+
+  function contextItems(tool, templates, advanced) {
+    var items = [];
+    if (tool === "web") {
+      items.push("Pasta do Kit descompactada (pelo menos `4-Prompts-Notion/`) — ou anexe o PDF `notion-kit-showcase.pdf`");
+      return items;
+    }
+    items.push("Pasta do Kit descompactada: `Kit-IA-Dev/` (ou o zip `Kit-IA-Dev.zip` anexado no chat)");
+    items.push("Pasta do SEU projeto (raiz do repositório onde a IA vai instalar)");
+    if (templates) {
+      items.push("Pacote Templates: pasta descompactada `Order-Bump-Templates-por-Stack/` OU zip `Kit-IA-Dev-Templates-por-Stack.zip`");
+    }
+    if (advanced) {
+      items.push("Pacote Skills Avançadas: pasta `Upsell1-Kit-IA-Dev/` OU zip `Kit-IA-Dev-Skills-Avancadas.zip`");
+    }
+    return items;
+  }
+
+  function howToAttach(tool) {
+    if (tool === "cursor") {
+      return "No Cursor: arraste a(s) pasta(s)/zip(s) para o chat, ou use @ e aponte a pasta. Deixe o projeto aberto no workspace.";
+    }
+    if (tool === "claude") {
+      return "No Claude Code: abra o terminal na pasta do seu projeto e diga o caminho absoluto das pastas do kit (ou anexe o zip no chat, se a UI permitir).";
+    }
+    if (tool === "web") {
+      return "Na web: anexe o PDF do Notion (ou descreva o caminho da pasta descompactada se a ferramenta aceitar upload).";
+    }
+    return "Anexe/aponta a pasta descompactada ou o zip do pacote + a raiz do seu projeto. Se a ferramenta não aceitar zip, descompacte antes.";
+  }
+
+  function renderContextBox() {
+    var tool = selectedTool();
+    var templates = hasTemplates();
+    var advanced = hasAdvanced();
+    var items = contextItems(tool, templates, advanced);
+    var html = "<strong>Passe isto para a IA antes (ou junto) do prompt:</strong><ul>";
+    items.forEach(function (item) { html += "<li>" + item + "</li>"; });
+    html += "</ul><p class=\"how\">" + howToAttach(tool) + "</p>";
+    html += "<p class=\"how\"><b>Dica:</b> preferir pasta descompactada. Zip também serve se a ferramenta aceitar anexo.</p>";
+    document.getElementById("contextBox").innerHTML = html;
+  }
+
+  function buildPrompt() {
+    var tool = selectedTool();
+    var templates = hasTemplates();
+    var advanced = hasAdvanced();
+    var packs = ["Kit IA Dev"];
+    if (templates) packs.push("Templates por Stack");
+    if (advanced) packs.push("Skills Avançadas");
+    var ctx = contextItems(tool, templates, advanced);
+
+    if (tool === "web") {
+      return [
+        "Quero configurar o Kit IA Dev usando só IA pela web (sem Claude Code/Cursor instalado).",
+        "",
+        "Pacotes que eu baixei: " + packs.join(", ") + ".",
+        "",
+        "Contexto que eu estou passando / vou passar:",
+        ctx.map(function (c) { return "- " + c; }).join("\n"),
+        "",
+        "Me guie em português do Brasil, um passo por vez:",
+        "1) Abrir `4-Prompts-Notion/` e duplicar a base Notion pelo PDF showcase.",
+        "2) Escolher 1 prompt alinhado ao que vou fazer agora, preencher [colchetes] e colar no chat.",
+        "",
+        "Não me jogue uma tabela de pastas. Pergunte o que estou tentando fazer hoje e indique o próximo clique/arquivo.",
+        "Se eu tiver Templates por Stack ou Skills Avançadas, explique com clareza que esses pacotes são para ferramenta instalada — e ofereça o caminho web com Notion enquanto eu não instalar nada.",
+        "Se o contexto (pasta/PDF) ainda não estiver anexado, peça para eu anexar antes de continuar."
+      ].join("\n");
+    }
+
+    var lines = [
+      "Você vai me ajudar a instalar o Kit IA Dev no meu projeto. Fale em português do Brasil.",
+      "",
+      "Contexto:",
+      "- Pacotes baixados: " + packs.join(", ") + ".",
+      "- Ferramenta que eu uso: " + toolLabel(tool) + ".",
+      "- Caminho típico de skills: " + skillInstallPath(tool) + ".",
+      "",
+      "Pastas/zips que eu estou passando (ou vou passar) como contexto:",
+      ctx.map(function (c) { return "- " + c; }).join("\n"),
+      "",
+      "Se algum desses contextos estiver faltando, peça o caminho absoluto ou o anexo do zip antes de copiar arquivos.",
+      "",
+      "Regras da sua condução:",
+      "- Um passo de cada vez. Espere eu confirmar antes do próximo.",
+      "- Não explique a arquitetura do produto; faça eu concluir o setup.",
+      "- Se algo for ambíguo (stack, pasta do projeto, ferramenta), pergunte em 1–2 perguntas curtas.",
+      "- Conteúdo técnico dos arquivos (CLAUDE.md, agent_docs, SKILL.md) permanece em inglês; conversa comigo em PT-BR.",
+      "",
+      "Plano que você deve executar comigo:",
+      "1) Confirmar que você consegue ver o kit (e os outros pacotes marcados) + a raiz do meu projeto.",
+    ];
+
+    if (templates) {
+      lines.push(
+        "2) Template: como eu tenho Templates por Stack, perguntar qual stack (Next.js, Node API, React Native/Expo, Python, Monorepo, Microsserviços, PHP/Laravel). Copiar ESSA pasta de template para a raiz do projeto (não misturar com o template genérico).",
+        "   Se a stack não estiver nas 7, usar o template genérico em `Kit-IA-Dev/2-CLAUDE-md-Template/`."
+      );
+    } else {
+      lines.push(
+        "2) Copiar `2-CLAUDE-md-Template/` (CLAUDE.md, agent_docs/, .claude/) para a raiz do meu projeto."
+      );
+    }
+
+    lines.push(
+      "3) Rodar a entrevista de preenchimento: ler o bloco SETUP NOTE do CLAUDE.md, verificar versões atuais da stack na web se possível, preencher os [FILL], apagar o comentário SETUP quando terminar. Se eu uso ferramenta além do Claude Code, seguir o multi-tool setup (AGENTS.md etc.).",
+      "4) Instalar as 10 skills do Kit (`3-Skills/`): copiar cada PASTA inteira (SKILL.md + references/). Caminho: " + skillInstallPath(tool) + "."
+    );
+
+    if (advanced) {
+      lines.push(
+        "5) Skills Avançadas: instalar as 8 pastas novas; depois SUBSTITUIR os 8 SKILL.md em `2-Atualizacoes-Skills-Existentes/` por cima das skills do kit (code-review e frontend-design não têm patch).",
+        "6) Validar com um pedido óbvio (ex.: \"revisa esse código\" / \"escreve o commit\" / \"isso está lento\") e confirmar que a skill certa ativou."
+      );
+    } else {
+      lines.push(
+        "5) Validar com um pedido óbvio (ex.: \"revisa esse código\") e confirmar que a skill certa ativou."
+      );
+    }
+
+    lines.push(
+      "",
+      "Comece agora pela etapa 1. Se o kit/projeto ainda não estiver no contexto, peça o anexo ou o caminho absoluto antes de qualquer cópia de arquivo."
+    );
+    return lines.join("\n");
+  }
+
+  function refresh() {
+    renderContextBox();
+    document.getElementById("prompt").value = buildPrompt();
+    document.getElementById("copyStatus").textContent = "";
+  }
+
+  document.getElementById("copyBtn").addEventListener("click", async function () {
+    var text = document.getElementById("prompt").value;
+    try {
+      await navigator.clipboard.writeText(text);
+      document.getElementById("copyStatus").textContent = "Copiado. Cole no chat da sua IA.";
+    } catch (e) {
+      document.getElementById("prompt").select();
+      document.getElementById("copyStatus").textContent = "Selecionei o texto — use Ctrl+C / Cmd+C.";
+    }
+  });
+  document.getElementById("refreshBtn").addEventListener("click", refresh);
+  document.querySelectorAll('input[name="tool"], #packTemplates, #packAdvanced').forEach(function (el) {
+    el.addEventListener("change", refresh);
+  });
+  refresh();
+})();
+</script>
+</body>
+</html>

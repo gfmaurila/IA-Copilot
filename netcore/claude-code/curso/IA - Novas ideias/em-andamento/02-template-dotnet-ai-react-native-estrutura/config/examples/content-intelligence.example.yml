@@ -1,0 +1,16 @@
+ContentIntelligence:
+  Enabled: true
+  DefaultStorageProvider: MinIO
+  Providers:
+    Local: { Enabled: true }
+    MinIO: { Enabled: true }
+    S3: { Enabled: false }
+    GoogleDrive: { Enabled: false }
+    OneDrive: { Enabled: false }
+    SharePoint: { Enabled: false }
+  Processing:
+    Documents: true
+    Audio: true
+    Video: true
+    Rag: true
+    Automation: false

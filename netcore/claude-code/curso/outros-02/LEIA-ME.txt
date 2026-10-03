@@ -1,0 +1,3 @@
+Abra COMECE.html no navegador.
+
+Lá aparece o que anexar como contexto (pasta ou zip) + o prompt para colar na IA.

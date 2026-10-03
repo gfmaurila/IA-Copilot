@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Kit.Producer - publishing side of the asynchronous messaging bridge
+    (Domain Events -> Kafka topics).
+
+    This is a LIBRARY, not a process. Kit.Api must never reference a Kafka
+    client type, so the client lives here behind IEventProducer and the
+    composition root in Kit.Infrastructure decides which implementation to use.
+
+    The transport envelope (DomainEventMessage) also lives here because
+    Kit.Consumer needs to read the exact same shape without taking a dependency
+    on the Domain layer.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Kit.Producer</RootNamespace>
+    <AssemblyName>Kit.Producer</AssemblyName>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Confluent.Kafka" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+</Project>

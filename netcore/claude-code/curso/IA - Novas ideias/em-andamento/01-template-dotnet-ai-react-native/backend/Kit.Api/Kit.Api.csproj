@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!--
+    Kit.Api - HTTP boundary, middleware pipeline, authentication and
+    authorization wiring, request/response contracts, OpenAPI and composition
+    root of the Modular Monolith.
+
+    HARD RULE: endpoints must be thin. No business rule, no EF Core query,
+    no LLM vendor call inside a controller or minimal-API handler.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Kit.Api</RootNamespace>
+    <AssemblyName>Kit.Api</AssemblyName>
+    <UserSecretsId>kit-api-2b8f1c64-9d3e-4a77-b0f1-6c5a9e2d4b18</UserSecretsId>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kit.Domain\Kit.Domain.csproj" />
+    <ProjectReference Include="..\Kit.Application\Kit.Application.csproj" />
+    <ProjectReference Include="..\Kit.Infrastructure\Kit.Infrastructure.csproj" />
+    <ProjectReference Include="..\Kit.CrossCutting\Kit.CrossCutting.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Rate limiting ships in the ASP.NET Core shared framework; it must NOT be
+         referenced as a package or the build fails with NU1510. -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+    <PackageReference Include="prometheus-net.AspNetCore" />
+  </ItemGroup>
+
+</Project>

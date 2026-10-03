@@ -1,0 +1,48 @@
+services:
+  db-dev:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: ${DB_DEV_NAME:-template_dev}
+      POSTGRES_USER: ${DB_DEV_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_DEV_PASSWORD:-postgres}
+    ports: ["5432:5432"]
+    volumes: ["db-dev-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_DEV_USER:-postgres} -d ${DB_DEV_NAME:-template_dev}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  db-test:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: ${DB_TEST_NAME:-template_test}
+      POSTGRES_USER: ${DB_TEST_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_TEST_PASSWORD:-postgres}
+    ports: ["5433:5432"]
+    tmpfs: ["/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_TEST_USER:-postgres} -d ${DB_TEST_NAME:-template_test}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Default: Host=db-dev;Port=5432;Database=${DB_DEV_NAME:-template_dev};Username=${DB_DEV_USER:-postgres};Password=${DB_DEV_PASSWORD:-postgres}
+    ports: ["8080:8080"]
+    depends_on:
+      db-dev:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    environment:
+      VITE_API_URL: http://localhost:8080
+    ports: ["5173:5173"]
+    depends_on: [backend]
+
+volumes:
+  db-dev-data:

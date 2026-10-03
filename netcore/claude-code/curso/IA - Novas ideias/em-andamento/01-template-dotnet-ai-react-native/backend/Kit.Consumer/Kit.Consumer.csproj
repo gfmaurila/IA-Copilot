@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <!--
+    Kit.Consumer - subscribing side of the asynchronous messaging bridge.
+    Reacts to Domain Events published by Kit.Producer, typically by dispatching
+    in-process handlers (notifications, projections, audit trail, webhooks).
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Kit.Consumer</RootNamespace>
+    <AssemblyName>Kit.Consumer</AssemblyName>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kit.Domain\Kit.Domain.csproj" />
+    <ProjectReference Include="..\Kit.Application\Kit.Application.csproj" />
+    <ProjectReference Include="..\Kit.Producer\Kit.Producer.csproj" />
+    <ProjectReference Include="..\Kit.CrossCutting\Kit.CrossCutting.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+</Project>

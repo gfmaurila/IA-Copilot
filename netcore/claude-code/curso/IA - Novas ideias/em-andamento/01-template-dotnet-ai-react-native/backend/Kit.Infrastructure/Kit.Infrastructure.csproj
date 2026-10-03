@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Kit.Infrastructure - persistence, repositories, Unit of Work, EF Core
+    migrations, MySQL provider, Redis, messaging, external integrations and
+    the concrete implementations of every Application port.
+
+    This is the ONLY Kit project allowed to reference MySqlConnector / DbContext
+    / vendor SDKs.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Kit.Infrastructure</RootNamespace>
+    <AssemblyName>Kit.Infrastructure</AssemblyName>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kit.Domain\Kit.Domain.csproj" />
+    <ProjectReference Include="..\Kit.Application\Kit.Application.csproj" />
+    <ProjectReference Include="..\Kit.CrossCutting\Kit.CrossCutting.csproj" />
+    <ProjectReference Include="..\Kit.Producer\Kit.Producer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="MySql.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" />
+    <PackageReference Include="StackExchange.Redis" />
+    <PackageReference Include="Confluent.Kafka" />
+    <PackageReference Include="BCrypt.Net-Next" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+    <PackageReference Include="Microsoft.Extensions.Http" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
+    <PackageReference Include="Bogus" />
+  </ItemGroup>
+
+</Project>

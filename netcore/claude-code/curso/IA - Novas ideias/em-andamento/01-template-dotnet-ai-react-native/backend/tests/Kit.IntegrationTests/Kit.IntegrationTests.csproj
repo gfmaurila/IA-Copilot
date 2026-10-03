@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Kit.IntegrationTests - tests that need REAL infrastructure.
+
+    HARD RULE (prompts.md §21): never run these against the DEV database.
+    They must target the isolated TEST MySQL container (Testcontainers.MySql,
+    ephemeral port, database name suffixed with _test) or the compose service
+    "mysql-test".
+
+    External AI providers are never called for real: LLM/embedding/vector
+    ports are replaced by deterministic doubles.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Kit.IntegrationTests</RootNamespace>
+    <AssemblyName>Kit.IntegrationTests</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Kit.Api\Kit.Api.csproj" />
+    <ProjectReference Include="..\..\Kit.Domain\Kit.Domain.csproj" />
+    <ProjectReference Include="..\..\Kit.Application\Kit.Application.csproj" />
+    <ProjectReference Include="..\..\Kit.Infrastructure\Kit.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+    <PackageReference Include="Testcontainers.MySql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Using Include="FluentAssertions" />
+  </ItemGroup>
+
+</Project>
