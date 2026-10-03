@@ -1,0 +1,6 @@
+@Template.Message.Redis.Producer.Api_HostAddress = http://localhost:5027
+
+GET {{Template.Message.Redis.Producer.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

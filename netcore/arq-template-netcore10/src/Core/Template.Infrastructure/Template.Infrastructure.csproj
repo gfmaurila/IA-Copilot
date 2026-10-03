@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\arq\Template.Message.Kafka.Consumer\Template.Message.Kafka.Consumer.csproj" />
+    <ProjectReference Include="..\..\..\arq\Template.Message.Kafka.Producer\Template.Message.Kafka.Producer.csproj" />
+    <ProjectReference Include="..\..\..\arq\Template.Message.RabbitMQ.Consumer\Template.Message.RabbitMQ.Consumer.csproj" />
+    <ProjectReference Include="..\..\..\arq\Template.Message.RabbitMQ.Producer\Template.Message.RabbitMQ.Producer.csproj" />
+    <ProjectReference Include="..\..\..\arq\Template.Message.Redis.Consumer\Template.Message.Redis.Consumer.csproj" />
+    <ProjectReference Include="..\..\..\arq\Template.Message.Redis.Producer\Template.Message.Redis.Producer.csproj" />
+    <ProjectReference Include="..\Template.Domain\Template.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
